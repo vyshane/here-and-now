@@ -1,0 +1,26 @@
+PODS:
+  - EasyPeasy (1.6.0)
+  - GoogleMaps (2.6.0):
+    - GoogleMaps/Maps (= 2.6.0)
+  - GoogleMaps/Base (2.6.0)
+  - GoogleMaps/Maps (2.6.0):
+    - GoogleMaps/Base
+  - RxCocoa (4.1.2):
+    - RxSwift (~> 4.0)
+  - RxSwift (4.1.2)
+
+DEPENDENCIES:
+  - EasyPeasy (~> 1.6)
+  - GoogleMaps (~> 2.6)
+  - RxCocoa (~> 4.1)
+  - RxSwift (~> 4.1)
+
+SPEC CHECKSUMS:
+  EasyPeasy: aef0a77d7e7636d6b5e046194bc911b0a8d73c88
+  GoogleMaps: 42f91c68b7fa2f84d5c86597b18ceb99f5414c7f
+  RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
+  RxSwift: e49536837d9901277638493ea537394d4b55f570
+
+PODFILE CHECKSUM: a5fd63eedc4a7ec1be53ece21a5f3d1b40c874d8
+
+COCOAPODS: 1.4.0
