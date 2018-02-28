@@ -1,9 +1,7 @@
-//___FILEHEADER___
-
 import XCTest
-@testable import ___VARIABLE_productName:identifier___
+//@testable import ___VARIABLE_productName:identifier___
 
-class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
+class WeatherServiceTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
