@@ -1,8 +1,6 @@
-//___FILEHEADER___
-
 import XCTest
 
-class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
+class SampleUITests: XCTestCase {
         
     override func setUp() {
         super.setUp()

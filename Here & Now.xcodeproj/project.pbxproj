@@ -17,8 +17,8 @@
 		34C33B9B203EC20400D130B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34C33B99203EC20400D130B3 /* Main.storyboard */; };
 		34C33B9D203EC20400D130B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34C33B9C203EC20400D130B3 /* Assets.xcassets */; };
 		34C33BA0203EC20500D130B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34C33B9E203EC20500D130B3 /* LaunchScreen.storyboard */; };
-		34C33BAB203EC20500D130B3 /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C33BAA203EC20500D130B3 /* WeatherServiceTests.swift */; };
-		34C33BB6203EC20600D130B3 /* Here___NowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C33BB5203EC20600D130B3 /* Here___NowUITests.swift */; };
+		34C33BB6203EC20600D130B3 /* SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C33BB5203EC20600D130B3 /* SampleUITests.swift */; };
+		34E38E712048AD090074C309 /* WebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E38E702048AD090074C309 /* WebServiceTests.swift */; };
 		452916ADBCA9F290AAFB0D8C /* Pods_Here___NowUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531D7CB14FF85DC2A38AAEFD /* Pods_Here___NowUITests.framework */; };
 		6CECDF64D37AAB119AC41587 /* Pods_Here___Now.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C14DD0DED5D6BE98D9D67F7 /* Pods_Here___Now.framework */; };
 /* End PBXBuildFile section */
@@ -54,11 +54,11 @@
 		34C33B9F203EC20500D130B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		34C33BA1203EC20500D130B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34C33BA6203EC20500D130B3 /* Here & NowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Here & NowTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		34C33BAA203EC20500D130B3 /* WeatherServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceTests.swift; sourceTree = "<group>"; };
 		34C33BAC203EC20500D130B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34C33BB1203EC20500D130B3 /* Here & NowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Here & NowUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		34C33BB5203EC20600D130B3 /* Here___NowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Here___NowUITests.swift"; sourceTree = "<group>"; };
+		34C33BB5203EC20600D130B3 /* SampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleUITests.swift; sourceTree = "<group>"; };
 		34C33BB7203EC20600D130B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		34E38E702048AD090074C309 /* WebServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
 		531D7CB14FF85DC2A38AAEFD /* Pods_Here___NowUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_Here___NowUITests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		738BF76E458DEE3C9B310896 /* Pods-Here & NowUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Here & NowUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Here & NowUITests/Pods-Here & NowUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7C14DD0DED5D6BE98D9D67F7 /* Pods_Here___Now.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_Here___Now.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,8 +155,8 @@
 		34C33BA9203EC20500D130B3 /* Here & NowTests */ = {
 			isa = PBXGroup;
 			children = (
-				34C33BAA203EC20500D130B3 /* WeatherServiceTests.swift */,
 				34C33BAC203EC20500D130B3 /* Info.plist */,
+				34E38E702048AD090074C309 /* WebServiceTests.swift */,
 			);
 			path = "Here & NowTests";
 			sourceTree = "<group>";
@@ -164,8 +164,8 @@
 		34C33BB4203EC20600D130B3 /* Here & NowUITests */ = {
 			isa = PBXGroup;
 			children = (
-				34C33BB5203EC20600D130B3 /* Here___NowUITests.swift */,
 				34C33BB7203EC20600D130B3 /* Info.plist */,
+				34C33BB5203EC20600D130B3 /* SampleUITests.swift */,
 			);
 			path = "Here & NowUITests";
 			sourceTree = "<group>";
@@ -353,9 +353,18 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Here & NowTests/Pods-Here & NowTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/Mockingjay/Mockingjay.framework",
+				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
+				"${BUILT_PRODUCTS_DIR}/URITemplate/URITemplate.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mockingjay.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/URITemplate.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -506,7 +515,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34C33BAB203EC20500D130B3 /* WeatherServiceTests.swift in Sources */,
+				34E38E712048AD090074C309 /* WebServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,7 +523,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34C33BB6203EC20600D130B3 /* Here___NowUITests.swift in Sources */,
+				34C33BB6203EC20600D130B3 /* SampleUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -702,7 +711,7 @@
 				DEVELOPMENT_TEAM = 9A22Z45ZAV;
 				INFOPLIST_FILE = "Here & NowTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "mu.node.Here---NowTests";
+				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -720,7 +729,7 @@
 				DEVELOPMENT_TEAM = 9A22Z45ZAV;
 				INFOPLIST_FILE = "Here & NowTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "mu.node.Here---NowTests";
+				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -737,7 +746,7 @@
 				DEVELOPMENT_TEAM = 9A22Z45ZAV;
 				INFOPLIST_FILE = "Here & NowUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "mu.node.Here---NowUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -754,7 +763,7 @@
 				DEVELOPMENT_TEAM = 9A22Z45ZAV;
 				INFOPLIST_FILE = "Here & NowUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "mu.node.Here---NowUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
