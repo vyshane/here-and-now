@@ -1,7 +1,7 @@
 import XCTest
 import Mockingjay
 import RxBlocking
-@testable import Here___Now
+@testable import HereAndNow
 
 class WebServiceTests: XCTestCase, WebService {
     
@@ -17,5 +17,9 @@ class WebServiceTests: XCTestCase, WebService {
         let url = URL(string: "http://localhost/api/test/foobar")
         let response: FooBar = try! get(url: url!).toBlocking().single()
         XCTAssertEqual(response, FooBar(foo: "bar"))
+    }
+    
+    func testGetFailure() {
+        // TODO
     }
 }

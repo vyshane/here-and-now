@@ -12,6 +12,8 @@ PODS:
     - URITemplate (~> 2.0)
   - Mockingjay/XCTest (2.0.1):
     - Mockingjay/Core
+  - Nimble (7.0.3)
+  - Quick (1.2.0)
   - RxBlocking (4.1.2):
     - RxSwift (~> 4.0)
   - RxCocoa (4.1.2):
@@ -23,6 +25,8 @@ DEPENDENCIES:
   - EasyPeasy (~> 1.6)
   - GoogleMaps (~> 2.6)
   - Mockingjay (~> 2.0)
+  - Nimble (~> 7.0)
+  - Quick (~> 1.2)
   - RxBlocking (~> 4.1)
   - RxCocoa (~> 4.1)
   - RxSwift (~> 4.1)
@@ -31,11 +35,13 @@ SPEC CHECKSUMS:
   EasyPeasy: aef0a77d7e7636d6b5e046194bc911b0a8d73c88
   GoogleMaps: 42f91c68b7fa2f84d5c86597b18ceb99f5414c7f
   Mockingjay: 11a621880d2887f1775bdcf824341eb68f218450
+  Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
+  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
   RxBlocking: f6054985901412fc8c02daa84e92d4ba68c61389
   RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
   RxSwift: e49536837d9901277638493ea537394d4b55f570
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: c8fbe5637990faf9211eef3e67072d989b275ff3
+PODFILE CHECKSUM: a3e158325be68fee8582bf35fd45bdfe0db4ce6f
 
 COCOAPODS: 1.4.0
