@@ -10,10 +10,10 @@ target 'HereAndNow' do
 
   target 'HereAndNowTests' do
     inherit! :search_paths
-    pod 'Mockingjay', '~> 2.0'
-    pod 'RxBlocking', '~> 4.1'
     pod 'Quick', '~> 1.2'
     pod 'Nimble', '~> 7.0'
+    pod 'RxBlocking', '~> 4.1'
+    pod 'Mockingjay', '~> 2.0'
   end
 
   target 'HereAndNowUITests' do

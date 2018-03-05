@@ -1,25 +1,28 @@
 import XCTest
 import Mockingjay
+import Nimble
 import RxBlocking
 @testable import HereAndNow
 
 class WebServiceTests: XCTestCase, WebService {
     
-    struct FooBar: Decodable, Equatable {
+    let serviceUri = "http://localhost/api/test/foobar"
+
+    struct DecodableResponse: Decodable, Equatable {
         var foo: String
-        override static func == (left: FooBar, right: FooBar) -> Bool {
+        override static func == (left: DecodableResponse, right: DecodableResponse) -> Bool {
             return left.foo == right.foo
         }
     }
     
     func testGetAndDecode() {
-        stub(uri("http://localhost/api/test/foobar"), json([ "foo": "bar" ]))
-        let url = URL(string: "http://localhost/api/test/foobar")
-        let response: FooBar = try! get(url: url!).toBlocking().single()
-        XCTAssertEqual(response, FooBar(foo: "bar"))
+        stub(uri(serviceUri), json([ "foo": "bar" ]))
+        let response: DecodableResponse = try! get(url: URL(string: serviceUri)!).toBlocking().first()!
+        expect(response) == DecodableResponse(foo: "bar")
     }
     
     func testGetFailure() {
-        // TODO
+        stub(uri(serviceUri), http(500))
+        expect(try self.get(url: URL(string: self.serviceUri)!).toBlocking().first()!).to(throwError())
     }
 }

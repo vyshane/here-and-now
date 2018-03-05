@@ -8,10 +8,9 @@ struct Weather {
     var humidity: Int
     var pressure: Float
     
-    init?(fromJSON: CurrentWeatherJSON) {
-        guard let weather = fromJSON.weather?[0],
-            let main = fromJSON.main
-            else { return nil }
+    init(fromJSON: CurrentWeatherJSON) {
+        let weather = fromJSON.weather[0]
+        let main = fromJSON.main
         description = weather.description
         temperature = main.temp
         minimumTemperature = main.temp_min
@@ -24,8 +23,8 @@ struct Weather {
 // MARK: OpenWeatherMap JSON structures for current weather web service
 
 struct CurrentWeatherJSON: Decodable {
-    let weather: [WeatherJSON]?
-    let main: MainJSON?
+    let weather: [WeatherJSON]
+    let main: MainJSON
 }
 
 struct WeatherJSON: Decodable {

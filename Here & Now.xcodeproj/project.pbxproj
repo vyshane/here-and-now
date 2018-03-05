@@ -43,7 +43,7 @@
 /* Begin PBXFileReference section */
 		094BC068FF542545B0E20F52 /* Pods-HereAndNow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HereAndNow.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HereAndNow/Pods-HereAndNow.debug.xcconfig"; sourceTree = "<group>"; };
 		2C7EE151CA71CCE67845BEAD /* Pods_HereAndNowUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HereAndNowUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CA043E08589482742B5BD1E /* Pods_Here___NowTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_Here___NowTests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CA043E08589482742B5BD1E /* Pods_Here___NowTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Here___NowTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3499D0DA203F95A300734D1A /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		3499D0DC203F97DE00734D1A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		3499D0DF203F99EF00734D1A /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
@@ -62,12 +62,12 @@
 		34C33BB7203EC20600D130B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34E38E702048AD090074C309 /* WebServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
 		3BC43FE0BB757A3824FA4134 /* Pods-HereAndNowTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HereAndNowTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HereAndNowTests/Pods-HereAndNowTests.debug.xcconfig"; sourceTree = "<group>"; };
-		531D7CB14FF85DC2A38AAEFD /* Pods_Here___NowUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_Here___NowUITests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		531D7CB14FF85DC2A38AAEFD /* Pods_Here___NowUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Here___NowUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5489E89A64282FB5B6AA10C8 /* Pods-HereAndNowUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HereAndNowUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HereAndNowUITests/Pods-HereAndNowUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		55255E1BFBF50F40A6AA172D /* Pods-HereAndNow.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HereAndNow.release.xcconfig"; path = "Pods/Target Support Files/Pods-HereAndNow/Pods-HereAndNow.release.xcconfig"; sourceTree = "<group>"; };
 		5D96D365A512D4FB1EB592B5 /* Pods-HereAndNowUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HereAndNowUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HereAndNowUITests/Pods-HereAndNowUITests.release.xcconfig"; sourceTree = "<group>"; };
 		738BF76E458DEE3C9B310896 /* Pods-Here & NowUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Here & NowUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Here & NowUITests/Pods-Here & NowUITests.release.xcconfig"; sourceTree = "<group>"; };
-		7C14DD0DED5D6BE98D9D67F7 /* Pods_Here___Now.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_Here___Now.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C14DD0DED5D6BE98D9D67F7 /* Pods_Here___Now.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Here___Now.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B484949514BB45D3C907134 /* Pods-Here & Now.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Here & Now.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Here & Now/Pods-Here & Now.debug.xcconfig"; sourceTree = "<group>"; };
 		AC59C66C66B70375A6D76603 /* Pods_HereAndNowTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HereAndNowTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACCC38537699520C38340849 /* Pods_HereAndNow.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HereAndNow.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -775,6 +775,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = HereAndNow;
@@ -792,6 +793,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mu.node.HereAndNowUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = HereAndNow;
