@@ -1,6 +1,7 @@
 //  Copyright © 2018 Vy-Shane Xie. All rights reserved.
 
 import CoreLocation
+import Fakery
 import Foundation
 import Mockingjay
 import Nimble
@@ -12,7 +13,8 @@ import RxBlocking
 class WeatherServiceSpec: QuickSpec {
     override func spec() {
         
-        let apiKey = "abc"
+        let faker = Faker(locale: "en-AU")
+        let apiKey = faker.lorem.characters(amount: 16)
         let latitude = 35.02
         let longitude = 139.01
         let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

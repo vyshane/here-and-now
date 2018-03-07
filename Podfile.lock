@@ -1,5 +1,6 @@
 PODS:
   - EasyPeasy (1.6.0)
+  - Fakery (3.3.0)
   - GoogleMaps (2.6.0):
     - GoogleMaps/Maps (= 2.6.0)
   - GoogleMaps/Base (2.6.0)
@@ -23,6 +24,7 @@ PODS:
 
 DEPENDENCIES:
   - EasyPeasy (~> 1.6)
+  - Fakery (~> 3.3)
   - GoogleMaps (~> 2.6)
   - Mockingjay (~> 2.0)
   - Nimble (~> 7.0)
@@ -33,6 +35,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   EasyPeasy: aef0a77d7e7636d6b5e046194bc911b0a8d73c88
+  Fakery: 3aae11a87721c807c18c6456500d088c1230d3e5
   GoogleMaps: 42f91c68b7fa2f84d5c86597b18ceb99f5414c7f
   Mockingjay: 11a621880d2887f1775bdcf824341eb68f218450
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
@@ -42,6 +45,6 @@ SPEC CHECKSUMS:
   RxSwift: e49536837d9901277638493ea537394d4b55f570
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: e90e67ef395fe917d576f7ad41ab75b8bdbe4748
+PODFILE CHECKSUM: de905edaf2c18e8527a807f4092f0be23062b4b5
 
 COCOAPODS: 1.4.0

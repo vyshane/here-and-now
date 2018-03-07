@@ -10,6 +10,7 @@ target 'Here and Now' do
 
   target 'Here and Now Tests' do
     inherit! :search_paths
+    pod 'Fakery', '~> 3.3'
     pod 'Quick', '~> 1.2'
     pod 'Nimble', '~> 7.0'
     pod 'RxBlocking', '~> 4.1'
