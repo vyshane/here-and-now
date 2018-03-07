@@ -3,8 +3,8 @@
 import Foundation
 import RxSwift
 
-func currentDate() -> Observable<Date> {
+func currentDate(tickInterval: Double = 0.1) -> Observable<Date> {
     return Observable<NSInteger>
-        .interval(0.1, scheduler: MainScheduler.instance)
+        .interval(tickInterval, scheduler: MainScheduler.instance)
         .map { _ in Date() }
 }
