@@ -19,6 +19,7 @@
 		34DFAF2D204F5D8D007E6B45 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAF2C204F5D8D007E6B45 /* Config.swift */; };
 		34DFAF2F204F5E16007E6B45 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAF2E204F5E16007E6B45 /* WeatherService.swift */; };
 		34DFAF31204F5E49007E6B45 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAF30204F5E49007E6B45 /* Weather.swift */; };
+		34DFAF34204F6588007E6B45 /* WeatherServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAF33204F6588007E6B45 /* WeatherServiceSpec.swift */; };
 		BA937E1669CD3E7DCE12974D /* Pods_Here_and_Now_UI_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE5C99567D686E0F6E048A83 /* Pods_Here_and_Now_UI_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,7 @@
 		34DFAF2C204F5D8D007E6B45 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		34DFAF2E204F5E16007E6B45 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		34DFAF30204F5E49007E6B45 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		34DFAF33204F6588007E6B45 /* WeatherServiceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceSpec.swift; sourceTree = "<group>"; };
 		3E9DA9EE2C635B4BA8853A42 /* Pods-Here and Now Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Here and Now Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Here and Now Tests/Pods-Here and Now Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6DE0EB9498D316693F39430B /* Pods-Here and Now UI Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Here and Now UI Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Here and Now UI Tests/Pods-Here and Now UI Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		7FFD5186D097608816F67E3E /* Pods_Here_and_Now_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Here_and_Now_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,6 +165,7 @@
 		34DFAF32204F5ECD007E6B45 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
+				34DFAF33204F6588007E6B45 /* WeatherServiceSpec.swift */,
 			);
 			path = Weather;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34DFAF12204F59E7007E6B45 /* Here_and_NowTests.swift in Sources */,
+				34DFAF34204F6588007E6B45 /* WeatherServiceSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

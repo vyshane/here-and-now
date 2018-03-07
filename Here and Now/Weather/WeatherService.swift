@@ -17,8 +17,8 @@ class WeatherService {
     func fetchCurrentWeather(coordinates: CLLocationCoordinate2D) -> Single<Weather> {
         let url = URL(string:
             "\(baseServiceURL)weather" +
-                "?APPID=\(self.apiKey)" +
-                "&lat=\(coordinates.latitude)" +
+            "?APPID=\(self.apiKey)" +
+            "&lat=\(coordinates.latitude)" +
             "&lon=\(coordinates.longitude)"
         )
         return URLSession.shared.rx
