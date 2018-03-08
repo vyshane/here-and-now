@@ -7,6 +7,7 @@ target 'Here and Now' do
   pod 'RxCocoa', '~> 4.1'
   pod 'EasyPeasy', '~> 1.6'
   pod 'GoogleMaps', '~> 2.6'
+  pod 'Solar', '~> 2.1'
 
   target 'Here and Now Tests' do
     inherit! :search_paths
