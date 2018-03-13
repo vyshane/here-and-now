@@ -5,8 +5,9 @@ target 'Here and Now' do
   use_frameworks!
   pod 'RxSwift', '~> 4.1'
   pod 'RxCocoa', '~> 4.1'
+  pod 'RxCoreLocation', '~> 1.0'
   pod 'EasyPeasy', '~> 1.6'
-  pod 'GoogleMaps', '~> 2.6'
+  pod 'RxGoogleMaps', '~> 3.0'
   pod 'Solar', '~> 2.1'
 
   target 'Here and Now Tests' do

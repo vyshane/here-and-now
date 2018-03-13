@@ -3,5 +3,6 @@
 import Foundation
 
 struct Config {
-    let openWeatherMapAPIKey = "a6bf8a09ef21407ebafd1321b60f9343"
+    let googleMobileServicesAPIKey = ""
+    let openWeatherMapAPIKey = ""
 }
