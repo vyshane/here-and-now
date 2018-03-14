@@ -39,6 +39,7 @@ class MainViewController: UIViewController, MainController {
 
 struct Components {
     let locationManager: CLLocationManager
+    let weatherService: WeatherService
     let mapView: GMSMapView
     let timeLabel: UILabel
 }
@@ -52,7 +53,7 @@ extension MainController {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
             mapView.settings.setAllGesturesEnabled(false)
-            if let mapStyle = try? GMSMapStyle(jsonString: Config().mapStyle) {
+            if let mapStyle = try? GMSMapStyle(jsonString: Config().lightMapStyle) {
                 mapView.mapStyle = mapStyle
             }
             addToRootView.addSubview(mapView)
@@ -75,6 +76,7 @@ extension MainController {
 
         return Components(
             locationManager: CLLocationManager(),
+            weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
             mapView: mapView,
             timeLabel: timeLabel
         )
