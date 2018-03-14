@@ -11,22 +11,29 @@ import UIKit
 class MainViewController: UIViewController, MainController {
     private var components: Components?
     private var disposeBag = DisposeBag()
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        components = initComponents(rootView: view)
+        components = initComponents(addToRootView: view)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let components = components {
-            startComponents(components: components, disposeBag: disposeBag)
-        }
         super.viewWillAppear(animated)
+        if let components = components {
+            start(components: components, disposedBy: disposeBag)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+        if let components = components {
+            stop(components: components)
+        }
         disposeBag = DisposeBag()
+        super.viewDidDisappear(animated)
     }
 }
 
@@ -40,17 +47,31 @@ protocol MainController { }
 
 extension MainController {
     
-    func initComponents(rootView: UIView) -> Components {
-        // Map
-        GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
-        let mapView = GMSMapView()
-        rootView.addSubview(mapView)
-        mapView.easy.layout(Edges())
+    func initComponents(addToRootView: UIView) -> Components {
+        let mapView: GMSMapView = {
+            GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
+            let mapView = GMSMapView()
+            mapView.settings.setAllGesturesEnabled(false)
+            if let mapStyle = try? GMSMapStyle(jsonString: Config().mapStyle) {
+                mapView.mapStyle = mapStyle
+            }
+            addToRootView.addSubview(mapView)
+            mapView.easy.layout(Edges())
+            return mapView
+        }()
         
-        // Time
-        let timeLabel = UILabel()
-        rootView.addSubview(timeLabel)
-        timeLabel.easy.layout(Width(200), Height(120))
+        let timeLabel: UILabel = {
+            let timeLabel = UILabel()
+            timeLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)  // San Fransisco
+            timeLabel.textAlignment = .center
+            addToRootView.addSubview(timeLabel)
+            timeLabel.easy.layout(
+                TopMargin(56),
+                LeftMargin(16),
+                RightMargin(16)
+            )
+            return timeLabel
+        }()
 
         return Components(
             locationManager: CLLocationManager(),
@@ -59,42 +80,52 @@ extension MainController {
         )
     }
 
-    func startComponents(components: Components, disposeBag: DisposeBag) -> Void {
+    func start(components: Components, disposedBy: DisposeBag) -> Void {
         // Location
         components.locationManager.requestWhenInUseAuthorization()
         components.locationManager.startUpdatingLocation()
         
-        // Enable or disable map depending on access to location services
-        components.locationManager.rx.didChangeAuthorization
-            .map { self.isMapVisible(authorizationStatus: $1) }
-            .bind(to: components.mapView.rx.isHidden)
-            .disposed(by: disposeBag)
-        
-        // Update map location
-        components.locationManager.rx.location
-            .flatMap { self.cameraPosition(location: $0) }
-            .bind(to: components.mapView.rx.cameraToAnimate)
-            .disposed(by: disposeBag)
-        
-        // Time
-        currentDate()
-            .map { formattedTime(date: $0) }
+        formatCurrentTime(fromDate: currentDate())
             .bind(to: components.timeLabel.rx.text)
-            .disposed(by: disposeBag)
+            .disposed(by: disposedBy)
+        
+        shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
+            .bind(to: components.mapView.rx.isHidden)
+            .disposed(by: disposedBy)
+        
+        mapCameraPosition(forLocation: components.locationManager.rx.location)
+            .bind(to: components.mapView.rx.cameraToAnimate)
+            .disposed(by: disposedBy)
     }
     
-    func isMapVisible(authorizationStatus: CLAuthorizationStatus) -> Bool {
-        switch (authorizationStatus) {
-            case .denied: return true
-            case _: return false
+    func stop(components: Components) -> Void {
+        components.locationManager.stopUpdatingLocation()
+    }
+    
+    func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
+        return forAuthorizationEvent.map {
+            switch ($0.status) {
+                case .denied: return true
+                case _: return false
+            }
         }
     }
 
-    func cameraPosition(location: CLLocation?) -> Observable<GMSCameraPosition> {
-        if let location = location {
-            return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 17))
-        } else {
-            return Observable.empty()
+    func mapCameraPosition(forLocation: Observable<CLLocation?>) -> Observable<GMSCameraPosition> {
+        let cameraPosition: (CLLocation?) -> Observable<GMSCameraPosition> = {
+            guard let location = $0 else {
+                return Observable.empty()
+            }
+            return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14))
+        }
+        return forLocation.flatMap { cameraPosition($0) }
+    }
+
+    func formatCurrentTime(fromDate: Observable<Date>) -> Observable<String> {
+        return fromDate.map {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm"
+            return dateFormatter.string(from: $0)
         }
     }
 }

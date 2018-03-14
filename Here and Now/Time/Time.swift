@@ -13,12 +13,6 @@ func currentDate() -> Observable<Date> {
         .map { _ in Date() }
 }
 
-func formattedTime(date: Date) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "hh:mm"
-    return dateFormatter.string(from: date)
-}
-
 func isDaytime(date: Date, coordinates: CLLocationCoordinate2D) -> Bool? {
     let solar = Solar(for: date, coordinate: coordinates)
     return solar?.isDaytime
