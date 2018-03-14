@@ -91,10 +91,15 @@ extension MainController {
             .bind(to: components.timeLabel.rx.text)
             .disposed(by: disposedBy)
         
+        mapStyle(forLocation: components.locationManager.rx.location, date: currentDate())
+            .map { return try! GMSMapStyle(jsonString: $0.rawValue) }
+            .subscribe(onNext: { components.mapView.mapStyle = $0 })
+            .disposed(by: disposedBy)
+
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
             .bind(to: components.mapView.rx.isHidden)
             .disposed(by: disposedBy)
-        
+
         mapCameraPosition(forLocation: components.locationManager.rx.location)
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
@@ -112,11 +117,26 @@ extension MainController {
             }
         }
     }
+    
+    func mapStyle(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<MapStyle> {
+        return Observable.zip(forLocation, date) { (l, d) in
+            guard let location = l else {
+                return .light
+            }
+            guard let isDaytime = isDaytime(date: d, coordinates: location.coordinate) else {
+                return .light
+            }
+            if isDaytime {
+                return .light
+            }
+            return .dark
+        }
+    }
 
     func mapCameraPosition(forLocation: Observable<CLLocation?>) -> Observable<GMSCameraPosition> {
         let cameraPosition: (CLLocation?) -> Observable<GMSCameraPosition> = {
             guard let location = $0 else {
-                return Observable.empty()
+                return Observable.never()
             }
             return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14))
         }
