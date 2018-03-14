@@ -53,7 +53,7 @@ extension MainController {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
             mapView.settings.setAllGesturesEnabled(false)
-            if let mapStyle = try? GMSMapStyle(jsonString: Config().lightMapStyle) {
+            if let mapStyle = try? GMSMapStyle(jsonString: MapStyle.light.rawValue) {
                 mapView.mapStyle = mapStyle
             }
             addToRootView.addSubview(mapView)
