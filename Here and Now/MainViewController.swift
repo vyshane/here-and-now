@@ -19,7 +19,7 @@ class MainViewController: UIViewController, MainController {
     
     override func viewWillAppear(_ animated: Bool) {
         if let components = components {
-            startUI(currentDate: currentDate)(components, disposeBag)
+            startComponents(components: components, disposeBag: disposeBag)
         }
         super.viewWillAppear(animated)
     }
@@ -59,30 +59,28 @@ extension MainController {
         )
     }
 
-    func startUI(currentDate: @escaping CurrentDate) -> (_ components: Components, _ disposeBag: DisposeBag) -> Void {
-        return { (c: Components, disposeBag: DisposeBag) in
-            // Location
-            c.locationManager.requestWhenInUseAuthorization()
-            c.locationManager.startUpdatingLocation()
-            
-            // Enable or disable map depending on access to location services
-            c.locationManager.rx.didChangeAuthorization
-                .map { self.isMapVisible(authorizationStatus: $1) }
-                .bind(to: c.mapView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            // Update map location
-            c.locationManager.rx.location
-                .flatMap { self.cameraPosition(location: $0) }
-                .bind(to: c.mapView.rx.cameraToAnimate)
-                .disposed(by: disposeBag)
-            
-            // Time
-            currentDate()
-                .map { formattedTime(date: $0) }
-                .bind(to: c.timeLabel.rx.text)
-                .disposed(by: disposeBag)
-        }
+    func startComponents(components: Components, disposeBag: DisposeBag) -> Void {
+        // Location
+        components.locationManager.requestWhenInUseAuthorization()
+        components.locationManager.startUpdatingLocation()
+        
+        // Enable or disable map depending on access to location services
+        components.locationManager.rx.didChangeAuthorization
+            .map { self.isMapVisible(authorizationStatus: $1) }
+            .bind(to: components.mapView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        // Update map location
+        components.locationManager.rx.location
+            .flatMap { self.cameraPosition(location: $0) }
+            .bind(to: components.mapView.rx.cameraToAnimate)
+            .disposed(by: disposeBag)
+        
+        // Time
+        currentDate()
+            .map { formattedTime(date: $0) }
+            .bind(to: components.timeLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     func isMapVisible(authorizationStatus: CLAuthorizationStatus) -> Bool {
