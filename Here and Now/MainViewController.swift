@@ -48,6 +48,8 @@ protocol MainController { }
 
 extension MainController {
     
+    // MARK: Lifecycle Methods
+    
     func initComponents(addToRootView: UIView) -> Components {
         let mapView: GMSMapView = {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
@@ -108,6 +110,8 @@ extension MainController {
     func stop(components: Components) -> Void {
         components.locationManager.stopUpdatingLocation()
     }
+    
+    // MARK: UI State Changes
     
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
         return forAuthorizationEvent.map {
