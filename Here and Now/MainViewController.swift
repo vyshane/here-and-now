@@ -41,17 +41,17 @@ protocol MainController { }
 extension MainController {
     
     func initComponents(rootView: UIView) -> Components {
-        // Time
-        let timeLabel = UILabel()
-        rootView.addSubview(timeLabel)
-        timeLabel.easy.layout(Width(200), Height(120))
-
         // Map
         GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
         let mapView = GMSMapView()
         rootView.addSubview(mapView)
         mapView.easy.layout(Edges())
         
+        // Time
+        let timeLabel = UILabel()
+        rootView.addSubview(timeLabel)
+        timeLabel.easy.layout(Width(200), Height(120))
+
         return Components(
             locationManager: CLLocationManager(),
             mapView: mapView,
@@ -61,31 +61,42 @@ extension MainController {
 
     func startUI(currentDate: @escaping CurrentDate) -> (_ components: Components, _ disposeBag: DisposeBag) -> Void {
         return { (c: Components, disposeBag: DisposeBag) in
-            // Time
-            currentDate()
-                .map { formattedTime(date: $0) }
-                .observeOn(MainScheduler())
-                .subscribe(onNext: { t in c.timeLabel.text = t })
-                .disposed(by: disposeBag)
-            
             // Location
             c.locationManager.requestWhenInUseAuthorization()
             c.locationManager.startUpdatingLocation()
             
-            // Map
+            // Enable or disable map depending on access to location services
+            c.locationManager.rx.didChangeAuthorization
+                .map { self.isMapVisible(authorizationStatus: $1) }
+                .bind(to: c.mapView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
+            // Update map location
             c.locationManager.rx.location
-                .map { self.cameraPosition(location: $0) }
+                .flatMap { self.cameraPosition(location: $0) }
                 .bind(to: c.mapView.rx.cameraToAnimate)
+                .disposed(by: disposeBag)
+            
+            // Time
+            currentDate()
+                .map { formattedTime(date: $0) }
+                .bind(to: c.timeLabel.rx.text)
                 .disposed(by: disposeBag)
         }
     }
+    
+    func isMapVisible(authorizationStatus: CLAuthorizationStatus) -> Bool {
+        switch (authorizationStatus) {
+            case .denied: return true
+            case _: return false
+        }
+    }
 
-    func cameraPosition(location: CLLocation?) -> GMSCameraPosition {
+    func cameraPosition(location: CLLocation?) -> Observable<GMSCameraPosition> {
         if let location = location {
-            return GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 17)
+            return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 17))
         } else {
-            // Default to Times Square, NYC
-            return GMSCameraPosition.camera(withLatitude: 40.758896, longitude: -73.985130, zoom: 17)
+            return Observable.empty()
         }
     }
 }
