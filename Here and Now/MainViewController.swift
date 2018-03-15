@@ -99,7 +99,7 @@ extension MainController {
         components.locationManager.startUpdatingLocation()
         
         let location = components.locationManager.rx.location.share()
-
+        
         uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().timeLabelColor
@@ -134,7 +134,7 @@ extension MainController {
         
         currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location)
             .subscribe(onNext: { weather in
-                // FIXME: This fires multiple times.
+                // TODO: Update UI
                 print(weather)
             })
             .disposed(by: disposedBy)
@@ -202,7 +202,11 @@ extension MainController {
             return Observable.never()
         }
         return { location in
-            return location.flatMap { fetchWeather($0) }
+            return location
+                // It's unlikely that we would have travelled far enough that repeatedly
+                // querying the weather service gives us different weather conditions
+                .throttle(60, latest: true, scheduler: MainScheduler())
+                .flatMap { fetchWeather($0) }
         }
     }
 }
