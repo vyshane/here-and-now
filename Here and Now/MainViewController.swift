@@ -94,7 +94,6 @@ extension MainController {
     }
 
     func start(components: Components, disposedBy: DisposeBag) -> Void {
-        // Location
         components.locationManager.requestWhenInUseAuthorization()
         components.locationManager.startUpdatingLocation()
         
