@@ -192,6 +192,7 @@ extension MainController {
     
     typealias WeatherFetcher = (CLLocationCoordinate2D) -> Single<Weather>
 
+    // TODO: Investigate using CLGeocoder to get place name and only fetch weather if the place name changes
     func currentWeather(fetch: @escaping WeatherFetcher) ->
                        (_ location: Observable<CLLocation?>) -> Observable<Weather> {
         let fetchWeather: (CLLocation?) -> Observable<Weather> = {
