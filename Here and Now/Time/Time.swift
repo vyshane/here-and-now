@@ -13,12 +13,12 @@ func currentDate() -> Observable<Date> {
         .map { _ in Date() }
 }
 
-func isDaytime(date: Date, coordinates: CLLocationCoordinate2D) -> Bool? {
-    let solar = Solar(for: date, coordinate: coordinates)
+func isDaytime(date: Date, coordinate: CLLocationCoordinate2D) -> Bool? {
+    let solar = Solar(for: date, coordinate: coordinate)
     return solar?.isDaytime
 }
 
-func isNighttime(date: Date, coordinates: CLLocationCoordinate2D) -> Bool? {
-    let solar = Solar(for: date, coordinate: coordinates)
+func isNighttime(date: Date, coordinate: CLLocationCoordinate2D) -> Bool? {
+    let solar = Solar(for: date, coordinate: coordinate)
     return solar?.isNighttime
 }

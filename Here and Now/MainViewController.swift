@@ -55,9 +55,6 @@ extension MainController {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
             mapView.settings.setAllGesturesEnabled(false)
-            if let mapStyle = try? GMSMapStyle(jsonString: MapStyle.light.rawValue) {
-                mapView.mapStyle = mapStyle
-            }
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
             return mapView
@@ -93,11 +90,13 @@ extension MainController {
             .bind(to: components.timeLabel.rx.text)
             .disposed(by: disposedBy)
         
-        mapStyle(forLocation: components.locationManager.rx.location, date: currentDate())
-            .map { return try! GMSMapStyle(jsonString: $0.rawValue) }
-            .subscribe(onNext: { components.mapView.mapStyle = $0 })
+        uiScheme(forLocation: components.locationManager.rx.location, date: currentDate())
+            .subscribe(onNext: {
+                components.timeLabel.textColor = $0.style().timeLabelColor
+                components.mapView.mapStyle = $0.style().mapStyle
+            })
             .disposed(by: disposedBy)
-
+        
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
             .bind(to: components.mapView.rx.isHidden)
             .disposed(by: disposedBy)
@@ -122,27 +121,23 @@ extension MainController {
         }
     }
     
-    func mapStyle(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<MapStyle> {
+    func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
         return Observable.zip(forLocation, date) { (l, d) in
-            guard let location = l else {
-                return .light
+            if let location = l,
+                let isDaytime = isDaytime(date: d, coordinate: location.coordinate),
+                let scheme: UIScheme = isDaytime ? .light : .dark {
+                return scheme
             }
-            guard let isDaytime = isDaytime(date: d, coordinates: location.coordinate) else {
-                return .light
-            }
-            if isDaytime {
-                return .light
-            }
-            return .dark
+            return .light
         }
     }
 
     func mapCameraPosition(forLocation: Observable<CLLocation?>) -> Observable<GMSCameraPosition> {
         let cameraPosition: (CLLocation?) -> Observable<GMSCameraPosition> = {
-            guard let location = $0 else {
-                return Observable.never()
+            if let location = $0 {
+                return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14))
             }
-            return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14))
+            return Observable.never()
         }
         return forLocation.flatMap { cameraPosition($0) }
     }
