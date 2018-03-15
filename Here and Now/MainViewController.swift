@@ -111,14 +111,15 @@ extension MainController {
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
-            .bind(to: components.mapView.rx.isHidden)
+            .map { $0 ? 1.0 : 0.0 }
+            .bind(to: components.maskView.rx.alpha)
             .disposed(by: disposedBy)
         
-        shouldHideMaskView(whenLocationReceived: components.locationManager.rx.location)
-            .subscribe({ _ in
+        hideMaskView(whenLocationReceived: components.locationManager.rx.location)
+            .subscribe(onNext: { delay in
                 if (components.maskView.alpha > 0) {
                     UIView.animate(withDuration: 0.5,
-                                   delay: 1.0,
+                                   delay: delay,
                                    options: .curveEaseOut,
                                    animations: { components.maskView.alpha = 0.0 })
                 }
@@ -146,8 +147,10 @@ extension MainController {
         }
     }
     
-    func shouldHideMaskView(whenLocationReceived: Observable<CLLocation?>) -> Observable<Bool> {
-        return whenLocationReceived.map { _ in true }
+    typealias Delay = TimeInterval
+    
+    func hideMaskView(whenLocationReceived: Observable<CLLocation?>) -> Observable<Delay> {
+        return whenLocationReceived.map { _ in 1.0 }
     }
     
     func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
