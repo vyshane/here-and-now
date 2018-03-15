@@ -113,14 +113,13 @@ extension MainController {
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
-            .map { $0 ? 1.0 : 0.0 }
-            .bind(to: components.maskView.rx.alpha)
+            .bind(to: components.mapView.rx.isHidden)
             .disposed(by: disposedBy)
         
         hideMaskView(whenLocationReceived: location)
             .subscribe(onNext: { delay in
                 if (components.maskView.alpha > 0) {
-                    UIView.animate(withDuration: 0.5,
+                    UIView.animate(withDuration: 0.4,
                                    delay: delay,
                                    options: .curveEaseOut,
                                    animations: { components.maskView.alpha = 0.0 })
