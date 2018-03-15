@@ -9,17 +9,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        let weatherService = WeatherService(apiKey: Config().openWeatherMapAPIKey)
-        let coordinates = CLLocationCoordinate2D(latitude: 35.02, longitude: 139.01)
-        weatherService.fetchCurrentWeather(coordinates: coordinates)
-            .subscribe { weather in
-                switch weather {
-                case .success(let w):
-                    print(w)
-                case .error(let e):
-                    print(e)
-                }
-        }
         return true
     }
 

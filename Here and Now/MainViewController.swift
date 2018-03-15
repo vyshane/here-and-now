@@ -95,13 +95,12 @@ extension MainController {
 
     func start(components: Components, disposedBy: DisposeBag) -> Void {
         components.locationManager.requestWhenInUseAuthorization()
+        components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
         
-        formatCurrentTime(fromDate: currentDate())
-            .bind(to: components.timeLabel.rx.text)
-            .disposed(by: disposedBy)
-        
-        uiScheme(forLocation: components.locationManager.rx.location, date: currentDate())
+        let location = components.locationManager.rx.location.share()
+
+        uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().timeLabelColor
                 components.mapView.mapStyle = $0.style().mapStyle
@@ -109,12 +108,16 @@ extension MainController {
             })
             .disposed(by: disposedBy)
         
+        formatCurrentTime(fromDate: currentDate())
+            .bind(to: components.timeLabel.rx.text)
+            .disposed(by: disposedBy)
+        
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
             .map { $0 ? 1.0 : 0.0 }
             .bind(to: components.maskView.rx.alpha)
             .disposed(by: disposedBy)
         
-        hideMaskView(whenLocationReceived: components.locationManager.rx.location)
+        hideMaskView(whenLocationReceived: location)
             .subscribe(onNext: { delay in
                 if (components.maskView.alpha > 0) {
                     UIView.animate(withDuration: 0.5,
@@ -125,8 +128,15 @@ extension MainController {
             })
             .disposed(by: disposedBy)
 
-        mapCameraPosition(forLocation: components.locationManager.rx.location)
+        mapCameraPosition(forLocation: location)
             .bind(to: components.mapView.rx.cameraToAnimate)
+            .disposed(by: disposedBy)
+        
+        currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location)
+            .subscribe(onNext: { weather in
+                // FIXME: This fires multiple times.
+                print(weather)
+            })
             .disposed(by: disposedBy)
     }
     
@@ -136,6 +146,25 @@ extension MainController {
     }
     
     // MARK: UI State Changes
+    
+    func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
+        return Observable.zip(forLocation, date) { (l, d) in
+            if let location = l,
+                let isDaytime = isDaytime(date: d, coordinate: location.coordinate),
+                let scheme: UIScheme = isDaytime ? .light : .dark {
+                return scheme
+            }
+            return .light
+        }
+    }
+
+    func formatCurrentTime(fromDate: Observable<Date>) -> Observable<String> {
+        return fromDate.map {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm"
+            return dateFormatter.string(from: $0)
+        }
+    }
     
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
         return forAuthorizationEvent.map {
@@ -152,17 +181,6 @@ extension MainController {
         return whenLocationReceived.map { _ in 1.0 }
     }
     
-    func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
-        return Observable.zip(forLocation, date) { (l, d) in
-            if let location = l,
-                let isDaytime = isDaytime(date: d, coordinate: location.coordinate),
-                let scheme: UIScheme = isDaytime ? .light : .dark {
-                return scheme
-            }
-            return .light
-        }
-    }
-
     func mapCameraPosition(forLocation: Observable<CLLocation?>) -> Observable<GMSCameraPosition> {
         let cameraPosition: (CLLocation?) -> Observable<GMSCameraPosition> = {
             if let location = $0 {
@@ -172,12 +190,19 @@ extension MainController {
         }
         return forLocation.flatMap { cameraPosition($0) }
     }
+    
+    typealias WeatherFetcher = (CLLocationCoordinate2D) -> Single<Weather>
 
-    func formatCurrentTime(fromDate: Observable<Date>) -> Observable<String> {
-        return fromDate.map {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "hh:mm"
-            return dateFormatter.string(from: $0)
+    func currentWeather(fetch: @escaping WeatherFetcher) ->
+                       (_ location: Observable<CLLocation?>) -> Observable<Weather> {
+        let fetchWeather: (CLLocation?) -> Observable<Weather> = {
+            if let location = $0 {
+                return fetch(location.coordinate).asObservable()
+            }
+            return Observable.never()
+        }
+        return { location in
+            return location.flatMap { fetchWeather($0) }
         }
     }
 }
