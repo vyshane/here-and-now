@@ -10,15 +10,24 @@ enum UIScheme {
     func style() -> UIStyle {
         switch self {
         case .light:
-            return UIStyle(timeLabelColor: UIColor.black, mapStyle: lightMapStyle)
+            return UIStyle(
+                timeLabelColor: UIColor.black,
+                defaultBackgroundColor: UIColor.white,
+                mapStyle: lightMapStyle
+            )
         case .dark:
-            return UIStyle(timeLabelColor: UIColor.lightGray, mapStyle: darkMapStyle)
+            return UIStyle(
+                timeLabelColor: UIColor.lightGray,
+                defaultBackgroundColor: UIColor.black,
+                mapStyle: darkMapStyle
+            )
         }
     }
 }
 
 struct UIStyle {
     let timeLabelColor: UIColor
+    let defaultBackgroundColor: UIColor
     let mapStyle: GMSMapStyle
 }
 

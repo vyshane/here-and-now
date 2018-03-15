@@ -42,6 +42,9 @@ struct Components {
     let weatherService: WeatherService
     let mapView: GMSMapView
     let timeLabel: UILabel
+    
+    // Temporarily hides map to prevent background flash while map tiles are loading
+    let maskView: UIView
 }
 
 protocol MainController { }
@@ -58,6 +61,14 @@ extension MainController {
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
             return mapView
+        }()
+        
+        let maskView: UIView = {
+            let maskView = UIView()
+            maskView.backgroundColor = UIColor.black
+            addToRootView.addSubview(maskView)
+            maskView.easy.layout(Edges())
+            return maskView
         }()
         
         let timeLabel: UILabel = {
@@ -77,7 +88,8 @@ extension MainController {
             locationManager: CLLocationManager(),
             weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
             mapView: mapView,
-            timeLabel: timeLabel
+            timeLabel: timeLabel,
+            maskView: maskView
         )
     }
 
@@ -94,11 +106,23 @@ extension MainController {
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().timeLabelColor
                 components.mapView.mapStyle = $0.style().mapStyle
+                components.maskView.backgroundColor = $0.style().defaultBackgroundColor
             })
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
             .bind(to: components.mapView.rx.isHidden)
+            .disposed(by: disposedBy)
+        
+        shouldHideMaskView(whenLocationReceived: components.locationManager.rx.location)
+            .subscribe({ _ in
+                if (components.maskView.alpha > 0) {
+                    UIView.animate(withDuration: 0.5,
+                                   delay: 1.0,
+                                   options: .curveEaseOut,
+                                   animations: { components.maskView.alpha = 0.0 })
+                }
+            })
             .disposed(by: disposedBy)
 
         mapCameraPosition(forLocation: components.locationManager.rx.location)
@@ -107,6 +131,7 @@ extension MainController {
     }
     
     func stop(components: Components) -> Void {
+        components.maskView.alpha = 1.0
         components.locationManager.stopUpdatingLocation()
     }
     
@@ -119,6 +144,10 @@ extension MainController {
                 case _: return false
             }
         }
+    }
+    
+    func shouldHideMaskView(whenLocationReceived: Observable<CLLocation?>) -> Observable<Bool> {
+        return whenLocationReceived.map { _ in true }
     }
     
     func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
