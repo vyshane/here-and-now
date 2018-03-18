@@ -9,6 +9,7 @@ target 'Here and Now' do
   pod 'EasyPeasy', '~> 1.6'
   pod 'RxGoogleMaps', '~> 3.0'
   pod 'Solar', '~> 2.1'
+  pod 'FittableFontLabel', '~> 2.0'
 
   target 'Here and Now Tests' do
     inherit! :search_paths

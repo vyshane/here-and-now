@@ -11,14 +11,14 @@ enum UIScheme {
         switch self {
         case .light:
             return UIStyle(
-                timeLabelColor: UIColor.black,
-                defaultBackgroundColor: UIColor.white,
+                timeLabelColor: .darkGray,
+                defaultBackgroundColor: .white,
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
-                timeLabelColor: UIColor.lightGray,
-                defaultBackgroundColor: UIColor.black,
+                timeLabelColor: .lightGray,
+                defaultBackgroundColor: .black,
                 mapStyle: darkMapStyle
             )
         }

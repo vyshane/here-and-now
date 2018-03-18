@@ -2,6 +2,7 @@
 
 import CoreLocation
 import EasyPeasy
+import FittableFontLabel
 import GoogleMaps
 import RxCoreLocation
 import RxGoogleMaps
@@ -72,15 +73,23 @@ extension MainController {
         }()
         
         let timeLabel: UILabel = {
-            let timeLabel = UILabel()
-            timeLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)  // San Fransisco
+            let timeLabel = FittableFontLabel()
             timeLabel.textAlignment = .center
             addToRootView.addSubview(timeLabel)
             timeLabel.easy.layout(
-                TopMargin(56),
-                LeftMargin(16),
-                RightMargin(16)
+                TopMargin(32),
+                LeftMargin(0),
+                RightMargin(0)
             )
+            // Fill width
+            timeLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
+            timeLabel.numberOfLines = 1
+            timeLabel.lineBreakMode = .byWordWrapping
+            timeLabel.maxFontSize = 180
+            timeLabel.minFontScale = 0.3
+            let calculatedFontSize = timeLabel.fontSizeThatFits(text: "00:00", maxFontSize: 180,
+                                                                minFontScale: 0.3, rectSize: nil)
+            timeLabel.font = UIFont.systemFont(ofSize: calculatedFontSize, weight: .thin)
             return timeLabel
         }()
 

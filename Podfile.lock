@@ -1,6 +1,7 @@
 PODS:
   - EasyPeasy (1.6.0)
   - Fakery (3.3.0)
+  - FittableFontLabel (2.0.0)
   - GoogleMaps (2.6.0):
     - GoogleMaps/Maps (= 2.6.0)
   - GoogleMaps/Base (2.6.0)
@@ -35,6 +36,7 @@ PODS:
 DEPENDENCIES:
   - EasyPeasy (~> 1.6)
   - Fakery (~> 3.3)
+  - FittableFontLabel (~> 2.0)
   - Mockingjay (~> 2.0)
   - Nimble (~> 7.0)
   - Quick (~> 1.2)
@@ -48,6 +50,7 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   EasyPeasy: aef0a77d7e7636d6b5e046194bc911b0a8d73c88
   Fakery: 3aae11a87721c807c18c6456500d088c1230d3e5
+  FittableFontLabel: 977d130e137bd4f57a36adfb4f50361992abc7f2
   GoogleMaps: 42f91c68b7fa2f84d5c86597b18ceb99f5414c7f
   Mockingjay: 11a621880d2887f1775bdcf824341eb68f218450
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
@@ -60,6 +63,6 @@ SPEC CHECKSUMS:
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: cc4fde9a4e043986ac6fef2bce3ad25449c8350a
+PODFILE CHECKSUM: 343af244be99d8759572c04475add5c7e08ca79b
 
 COCOAPODS: 1.4.0
