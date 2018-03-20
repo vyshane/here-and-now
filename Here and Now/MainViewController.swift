@@ -44,6 +44,8 @@ struct Components {
     let mapView: GMSMapView
     let timeLabel: UILabel
     let placeLabel: UILabel
+    let weatherDescriptionLabel: UILabel
+    let currentTemperatureLabel: UILabel
     
     // Temporarily hides map to prevent background flash while map tiles are loading
     let maskView: UIView
@@ -89,7 +91,7 @@ extension MainController {
             let timeLabel = UILabel()
             timeLabel.textAlignment = .center
             stackView.addArrangedSubview(timeLabel)
-            timeLabel.font = UIFont.systemFont(ofSize: 20, weight: .thin)  // San Fransisco
+            timeLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)  // San Fransisco
             return timeLabel
         }()
         
@@ -109,6 +111,22 @@ extension MainController {
             placeLabel.font = UIFont.systemFont(ofSize: calculatedFontSize, weight: .thin)
             return placeLabel
         }()
+        
+        let weatherDescriptionLabel: UILabel = {
+            let weatherDescriptionLabel = UILabel()
+            weatherDescriptionLabel.textAlignment = .center
+            stackView.addArrangedSubview(weatherDescriptionLabel)
+            weatherDescriptionLabel.font = UIFont.systemFont(ofSize: 30, weight: .regular)  // San Fransisco
+            return weatherDescriptionLabel
+        }()
+        
+        let currentTemperatureLabel: UILabel = {
+            let currentTemperatureLabel = UILabel()
+            currentTemperatureLabel.textAlignment = .center
+            stackView.addArrangedSubview(currentTemperatureLabel)
+            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 70, weight: .regular)  // San Fransisco
+            return currentTemperatureLabel
+        }()
 
         return Components(
             locationManager: CLLocationManager(),
@@ -116,6 +134,8 @@ extension MainController {
             mapView: mapView,
             timeLabel: timeLabel,
             placeLabel: placeLabel,
+            weatherDescriptionLabel: weatherDescriptionLabel,
+            currentTemperatureLabel: currentTemperatureLabel,
             maskView: maskView
         )
     }
@@ -129,8 +149,8 @@ extension MainController {
         
         uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
-                components.timeLabel.textColor = $0.style().timeLabelColor
-                components.placeLabel.textColor = $0.style().timeLabelColor
+                components.timeLabel.textColor = $0.style().textColor
+                components.placeLabel.textColor = $0.style().textColor
                 components.mapView.mapStyle = $0.style().mapStyle
                 components.maskView.backgroundColor = $0.style().defaultBackgroundColor
             })
@@ -163,6 +183,15 @@ extension MainController {
         
         weather.map { $0.placeName }
             .bind(to: components.placeLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        weather.map { $0.description }
+            .bind(to: components.weatherDescriptionLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        weather.map { $0.temperature }
+            .map { self.formatTemperature($0) }
+            .bind(to: components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
     }
     
@@ -235,5 +264,9 @@ extension MainController {
                 .throttle(60, latest: true, scheduler: MainScheduler())
                 .flatMap { fetchWeather($0) }
         }
+    }
+    
+    func formatTemperature(_ temperature: Float) -> String {
+        return String(Int(temperature.rounded())) + "°"
     }
 }

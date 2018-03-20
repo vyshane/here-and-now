@@ -19,7 +19,8 @@ class WeatherService {
             "\(baseServiceURL)weather" +
             "?APPID=\(self.apiKey)" +
             "&lat=\(coordinates.latitude)" +
-            "&lon=\(coordinates.longitude)"
+            "&lon=\(coordinates.longitude)" +
+            "&units=metric"
         )
         return URLSession.shared.rx
             .data(request: URLRequest(url: url!))
