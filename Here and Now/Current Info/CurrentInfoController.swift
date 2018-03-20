@@ -9,51 +9,9 @@ import RxGoogleMaps
 import RxSwift
 import UIKit
 
-class MainViewController: UIViewController, MainController {
-    private var components: Components?
-    private var disposeBag = DisposeBag()
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+protocol CurrentInfoController { }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        components = initComponents(addToRootView: view)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let components = components {
-            start(components: components, disposedBy: disposeBag)
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        if let components = components {
-            stop(components: components)
-        }
-        disposeBag = DisposeBag()
-        super.viewDidDisappear(animated)
-    }
-}
-
-struct Components {
-    let locationManager: CLLocationManager
-    let weatherService: WeatherService
-    let mapView: GMSMapView
-    let timeLabel: UILabel
-    let placeLabel: UILabel
-    let weatherDescriptionLabel: UILabel
-    let currentTemperatureLabel: UILabel
-    
-    // Temporarily hides map to prevent background flash while map tiles are loading
-    let maskView: UIView
-}
-
-protocol MainController { }
-
-extension MainController {
+extension CurrentInfoController {
     
     // MARK: Lifecycle Methods
     
@@ -127,7 +85,7 @@ extension MainController {
             currentTemperatureLabel.font = UIFont.systemFont(ofSize: 70, weight: .regular)  // San Fransisco
             return currentTemperatureLabel
         }()
-
+        
         return Components(
             locationManager: CLLocationManager(),
             weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
@@ -139,7 +97,7 @@ extension MainController {
             maskView: maskView
         )
     }
-
+    
     func start(components: Components, disposedBy: DisposeBag) -> Void {
         components.locationManager.requestWhenInUseAuthorization()
         components.locationManager.distanceFilter = 10
@@ -174,7 +132,7 @@ extension MainController {
                 }
             })
             .disposed(by: disposedBy)
-
+        
         mapCameraPosition(forLocation: location)
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
@@ -212,7 +170,7 @@ extension MainController {
             return .light
         }
     }
-
+    
     func formatCurrentTime(fromDate: Observable<Date>) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
@@ -224,8 +182,8 @@ extension MainController {
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
         return forAuthorizationEvent.map {
             switch ($0.status) {
-                case .denied: return true
-                case _: return false
+            case .denied: return true
+            case _: return false
             }
         }
     }
@@ -247,23 +205,23 @@ extension MainController {
     }
     
     typealias WeatherFetcher = (CLLocationCoordinate2D) -> Single<Weather>
-
+    
     // TODO: Investigate using CLGeocoder to get place name and only fetch weather if the place name changes
     func currentWeather(fetch: @escaping WeatherFetcher) ->
-                       (_ location: Observable<CLLocation?>) -> Observable<Weather> {
-        let fetchWeather: (CLLocation?) -> Observable<Weather> = {
-            if let location = $0 {
-                return fetch(location.coordinate).asObservable()
+        (_ location: Observable<CLLocation?>) -> Observable<Weather> {
+            let fetchWeather: (CLLocation?) -> Observable<Weather> = {
+                if let location = $0 {
+                    return fetch(location.coordinate).asObservable()
+                }
+                return Observable.never()
             }
-            return Observable.never()
-        }
-        return { location in
-            return location
-                // It's unlikely that we would have travelled far enough that repeatedly
-                // querying the weather service gives us different weather conditions
-                .throttle(60, latest: true, scheduler: MainScheduler())
-                .flatMap { fetchWeather($0) }
-        }
+            return { location in
+                return location
+                    // It's unlikely that we would have travelled far enough that repeatedly
+                    // querying the weather service gives us different weather conditions
+                    .throttle(60, latest: true, scheduler: MainScheduler())
+                    .flatMap { fetchWeather($0) }
+            }
     }
     
     func formatTemperature(_ temperature: Float) -> String {
