@@ -43,6 +43,7 @@ struct Components {
     let weatherService: WeatherService
     let mapView: GMSMapView
     let timeLabel: UILabel
+    let placeLabel: UILabel
     
     // Temporarily hides map to prevent background flash while map tiles are loading
     let maskView: UIView
@@ -72,25 +73,41 @@ extension MainController {
             return maskView
         }()
         
-        let timeLabel: UILabel = {
-            let timeLabel = FittableFontLabel()
-            timeLabel.textAlignment = .center
-            addToRootView.addSubview(timeLabel)
-            timeLabel.easy.layout(
-                TopMargin(32),
-                LeftMargin(0),
-                RightMargin(0)
+        let stackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .vertical
+            addToRootView.addSubview(stackView)
+            stackView.easy.layout(
+                Top(16),
+                Left(8),
+                Right(8)
             )
+            return stackView
+        }()
+        
+        let timeLabel: UILabel = {
+            let timeLabel = UILabel()
+            timeLabel.textAlignment = .center
+            stackView.addArrangedSubview(timeLabel)
+            timeLabel.font = UIFont.systemFont(ofSize: 20, weight: .thin)  // San Fransisco
+            return timeLabel
+        }()
+        
+        let placeLabel: UILabel = {
+            let placeLabel = FittableFontLabel()
+            placeLabel.textAlignment = .center
+            stackView.addArrangedSubview(placeLabel)
+            
             // Fill width
-            timeLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
-            timeLabel.numberOfLines = 1
-            timeLabel.lineBreakMode = .byWordWrapping
-            timeLabel.maxFontSize = 180
-            timeLabel.minFontScale = 0.3
+            placeLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
+            placeLabel.numberOfLines = 1
+            placeLabel.lineBreakMode = .byWordWrapping
+            placeLabel.maxFontSize = 180
+            placeLabel.minFontScale = 0.3
             let calculatedFontSize = timeLabel.fontSizeThatFits(text: "00:00", maxFontSize: 180,
                                                                 minFontScale: 0.3, rectSize: nil)
-            timeLabel.font = UIFont.systemFont(ofSize: calculatedFontSize, weight: .thin)
-            return timeLabel
+            placeLabel.font = UIFont.systemFont(ofSize: calculatedFontSize, weight: .thin)
+            return placeLabel
         }()
 
         return Components(
@@ -98,6 +115,7 @@ extension MainController {
             weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
             mapView: mapView,
             timeLabel: timeLabel,
+            placeLabel: placeLabel,
             maskView: maskView
         )
     }
@@ -112,6 +130,7 @@ extension MainController {
         uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().timeLabelColor
+                components.placeLabel.textColor = $0.style().timeLabelColor
                 components.mapView.mapStyle = $0.style().mapStyle
                 components.maskView.backgroundColor = $0.style().defaultBackgroundColor
             })
@@ -140,11 +159,10 @@ extension MainController {
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
-        currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location)
-            .subscribe(onNext: { weather in
-                // TODO: Update UI
-                print(weather)
-            })
+        let weather = currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location).share()
+        
+        weather.map { $0.placeName }
+            .bind(to: components.placeLabel.rx.text)
             .disposed(by: disposedBy)
     }
     

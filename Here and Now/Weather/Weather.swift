@@ -3,6 +3,7 @@
 import Foundation
 
 struct Weather {
+    var placeName: String
     var description: String
     var temperature: Float
     var minimumTemperature: Float
@@ -13,6 +14,7 @@ struct Weather {
     init(fromJSON: CurrentWeatherJSON) {
         let weather = fromJSON.weather[0]
         let main = fromJSON.main
+        placeName = fromJSON.name
         description = weather.description
         temperature = main.temp
         minimumTemperature = main.temp_min
@@ -25,6 +27,7 @@ struct Weather {
 // MARK: OpenWeatherMap JSON structures for current weather web service
 
 struct CurrentWeatherJSON: Decodable {
+    let name: String
     let weather: [WeatherJSON]
     let main: MainJSON
 }
