@@ -45,14 +45,31 @@ extension CurrentInfoController {
             return stackView
         }()
         
+        let dateLabel: UILabel = {
+            let dateLabel = UILabel()
+            dateLabel.textAlignment = .center
+            addToRootView.addSubview(dateLabel)
+            dateLabel.easy.layout(
+                Right(8), Bottom(8)
+            )
+            dateLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)  // San Fransisco
+            return dateLabel
+        }()
+        
         let timeLabel: UILabel = {
-            let timeLabel = UILabel()
+            let timeLabel = FittableFontLabel()
             timeLabel.textAlignment = .center
             addToRootView.addSubview(timeLabel)
             timeLabel.easy.layout(
-                Right(8), Bottom(8)
+                Width().like(dateLabel), Right(8), Bottom(20)
             )
-            timeLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)  // San Fransisco
+            // Fill width
+            timeLabel.font = UIFont.systemFont(ofSize: 180, weight: .regular)
+            timeLabel.numberOfLines = 1
+            timeLabel.lineBreakMode = .byWordWrapping
+            timeLabel.maxFontSize = 180
+            timeLabel.minFontScale = 0.1
+            timeLabel.autoAdjustFontSize = true
             return timeLabel
         }()
         
@@ -61,7 +78,7 @@ extension CurrentInfoController {
             summaryLabel.textAlignment = .center
             stackView.addArrangedSubview(summaryLabel)
             // Fill width
-            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
+            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)
             summaryLabel.numberOfLines = 1
             summaryLabel.lineBreakMode = .byWordWrapping
             summaryLabel.maxFontSize = 180
@@ -74,7 +91,7 @@ extension CurrentInfoController {
             let currentTemperatureLabel = UILabel()
             currentTemperatureLabel.textAlignment = .left
             stackView.addArrangedSubview(currentTemperatureLabel)
-            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)  // San Fransisco
+            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)
             return currentTemperatureLabel
         }()
         
@@ -82,7 +99,7 @@ extension CurrentInfoController {
             let currentHumidityLabel = UILabel()
             currentHumidityLabel.textAlignment = .left
             stackView.addArrangedSubview(currentHumidityLabel)
-            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)  // San Fransisco
+            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)
             return currentHumidityLabel
         }()
         
@@ -91,6 +108,7 @@ extension CurrentInfoController {
             weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
             mapView: mapView,
             timeLabel: timeLabel,
+            dateLabel: dateLabel,
             summaryLabel: summaryLabel,
             currentTemperatureLabel: currentTemperatureLabel,
             currentHumidityLabel: currentHumidityLabel,
@@ -108,6 +126,7 @@ extension CurrentInfoController {
         uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().textColor
+                components.dateLabel.textColor = $0.style().textColor
                 components.summaryLabel.textColor = $0.style().textColor
                 components.currentTemperatureLabel.textColor = $0.style().textColor
                 components.currentHumidityLabel.textColor = $0.style().textColor
@@ -118,6 +137,10 @@ extension CurrentInfoController {
         
         formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
             .bind(to: components.timeLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        formatCurrentDate(fromDate: currentDate(), locale: Locale.current)
+            .bind(to: components.dateLabel.rx.text)
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
@@ -177,8 +200,17 @@ extension CurrentInfoController {
     func formatCurrentTime(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .full
             dateFormatter.timeStyle = .short
+            dateFormatter.dateStyle = .none
+            return dateFormatter.string(from: $0)
+        }
+    }
+    
+    func formatCurrentDate(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
+        return fromDate.map {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .full
+            dateFormatter.timeStyle = .none
             return dateFormatter.string(from: $0)
         }
     }

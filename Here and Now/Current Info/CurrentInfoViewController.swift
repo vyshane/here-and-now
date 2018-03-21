@@ -39,6 +39,7 @@ struct CurrentInfoComponents {
     let weatherService: WeatherService
     let mapView: GMSMapView
     let timeLabel: UILabel
+    let dateLabel: UILabel
     let summaryLabel: UILabel
     let currentTemperatureLabel: UILabel
     let currentHumidityLabel: UILabel

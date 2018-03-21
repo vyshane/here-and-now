@@ -17,7 +17,7 @@ enum UIScheme {
             )
         case .dark:
             return UIStyle(
-                textColor: UIColor(white: 0.9, alpha: 1.0),
+                textColor: UIColor(white: 0.8, alpha: 1.0),
                 defaultBackgroundColor: .black,
                 mapStyle: darkMapStyle
             )
