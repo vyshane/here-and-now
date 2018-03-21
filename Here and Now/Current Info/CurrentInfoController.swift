@@ -65,7 +65,7 @@ extension CurrentInfoController {
             let currentTemperatureLabel = UILabel()
             currentTemperatureLabel.textAlignment = .left
             stackView.addArrangedSubview(currentTemperatureLabel)
-            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)
+            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 130, weight: .thin)
             return currentTemperatureLabel
         }()
         
@@ -276,6 +276,6 @@ extension CurrentInfoController {
     }
     
     func formatHumidity(_ humidity: Int) -> String {
-        return "h: \(String(humidity))%"
+        return "\(String(humidity))% hu"
     }
 }
