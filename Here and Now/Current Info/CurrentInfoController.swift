@@ -164,7 +164,8 @@ extension CurrentInfoController {
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
-        let weather = currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location).share()
+        let weather = currentWeather(fetch:
+            components.weatherService.fetchCurrentWeather)(location, Locale.current.usesMetricSystem).share()
         
         summary(forWeather: weather)
             .bind(to: components.summaryLabel.rx.text)
@@ -242,23 +243,23 @@ extension CurrentInfoController {
         return forLocation.flatMap { cameraPosition($0) }
     }
 
-    typealias WeatherFetcher = (CLLocationCoordinate2D) -> Single<Weather>
+    typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
     // TODO: Investigate using CLGeocoder to get place name and only fetch weather if the place name changes
     func currentWeather(fetch: @escaping WeatherFetcher) ->
-        (_ location: Observable<CLLocation?>) -> Observable<Weather> {
-            let fetchWeather: (CLLocation?) -> Observable<Weather> = {
+        (_ location: Observable<CLLocation?>, _ useMetricSystem: Bool) -> Observable<Weather> {
+            let fetchWeather: (CLLocation?, Bool) -> Observable<Weather> = {
                 if let location = $0 {
-                    return fetch(location.coordinate).asObservable()
+                    return fetch(location.coordinate, $1).asObservable()
                 }
                 return Observable.never()
             }
-            return { location in
+            return { (location, useMetricSystem) in
                 return location
                     // It's unlikely that we would have travelled far enough that repeatedly
                     // querying the weather service gives us different weather conditions
                     .throttle(60, latest: true, scheduler: MainScheduler())
-                    .flatMap { fetchWeather($0) }
+                    .flatMap { fetchWeather($0, useMetricSystem) }
             }
     }
     

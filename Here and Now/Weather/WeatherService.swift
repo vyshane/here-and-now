@@ -14,13 +14,13 @@ class WeatherService {
         self.apiKey = apiKey
     }
     
-    func fetchCurrentWeather(coordinates: CLLocationCoordinate2D) -> Single<Weather> {
+    func fetchCurrentWeather(coordinates: CLLocationCoordinate2D, useMetricSystem: Bool = true) -> Single<Weather> {
         let url = URL(string:
             "\(baseServiceURL)weather" +
             "?APPID=\(self.apiKey)" +
             "&lat=\(coordinates.latitude)" +
             "&lon=\(coordinates.longitude)" +
-            "&units=metric"
+            "&units=" + (useMetricSystem ? "metric" : "imperial")
         )
         return URLSession.shared.rx
             .data(request: URLRequest(url: url!))
