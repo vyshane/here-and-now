@@ -11,13 +11,13 @@ enum UIScheme {
         switch self {
         case .light:
             return UIStyle(
-                textColor: .darkGray,
+                textColor: UIColor(white: 0.1, alpha: 1.0),
                 defaultBackgroundColor: .white,
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
-                textColor: .lightGray,
+                textColor: UIColor(white: 0.9, alpha: 1.0),
                 defaultBackgroundColor: .black,
                 mapStyle: darkMapStyle
             )
@@ -53,7 +53,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#616161"
+            "color": "#777777"
           }
         ]
       },
@@ -88,7 +88,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#757575"
+            "color": "#959595"
           }
         ]
       },
@@ -124,7 +124,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#757575"
+            "color": "#989898"
           }
         ]
       },
@@ -142,7 +142,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#616161"
+            "color": "#989898"
           }
         ]
       },
