@@ -45,6 +45,38 @@ extension CurrentInfoController {
             return stackView
         }()
         
+        let summaryLabel: UILabel = {
+            let summaryLabel = FittableFontLabel()
+            summaryLabel.textAlignment = .center
+            stackView.addArrangedSubview(summaryLabel)
+            // Fill width
+            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)
+            summaryLabel.numberOfLines = 1
+            summaryLabel.lineBreakMode = .byWordWrapping
+            summaryLabel.maxFontSize = 180
+            summaryLabel.minFontScale = 0.1
+            summaryLabel.autoAdjustFontSize = true
+            return summaryLabel
+        }()
+        
+        stackView.setCustomSpacing(8, after: summaryLabel)
+        
+        let currentTemperatureLabel: UILabel = {
+            let currentTemperatureLabel = UILabel()
+            currentTemperatureLabel.textAlignment = .left
+            stackView.addArrangedSubview(currentTemperatureLabel)
+            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)
+            return currentTemperatureLabel
+        }()
+        
+        let currentHumidityLabel: UILabel = {
+            let currentHumidityLabel = UILabel()
+            currentHumidityLabel.textAlignment = .left
+            stackView.addArrangedSubview(currentHumidityLabel)
+            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)
+            return currentHumidityLabel
+        }()
+        
         let dateLabel: UILabel = {
             let dateLabel = UILabel()
             dateLabel.textAlignment = .center
@@ -71,36 +103,6 @@ extension CurrentInfoController {
             timeLabel.minFontScale = 0.1
             timeLabel.autoAdjustFontSize = true
             return timeLabel
-        }()
-        
-        let summaryLabel: UILabel = {
-            let summaryLabel = FittableFontLabel()
-            summaryLabel.textAlignment = .center
-            stackView.addArrangedSubview(summaryLabel)
-            // Fill width
-            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)
-            summaryLabel.numberOfLines = 1
-            summaryLabel.lineBreakMode = .byWordWrapping
-            summaryLabel.maxFontSize = 180
-            summaryLabel.minFontScale = 0.1
-            summaryLabel.autoAdjustFontSize = true
-            return summaryLabel
-        }()
-        
-        let currentTemperatureLabel: UILabel = {
-            let currentTemperatureLabel = UILabel()
-            currentTemperatureLabel.textAlignment = .left
-            stackView.addArrangedSubview(currentTemperatureLabel)
-            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)
-            return currentTemperatureLabel
-        }()
-        
-        let currentHumidityLabel: UILabel = {
-            let currentHumidityLabel = UILabel()
-            currentHumidityLabel.textAlignment = .left
-            stackView.addArrangedSubview(currentHumidityLabel)
-            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)
-            return currentHumidityLabel
         }()
         
         return CurrentInfoComponents(
