@@ -6,7 +6,7 @@ import RxSwift
 import UIKit
 
 class CurrentInfoViewController: UIViewController, CurrentInfoController {
-    private var components: Components?
+    private var components: CurrentInfoComponents?
     private var disposeBag = DisposeBag()
     
     override var prefersStatusBarHidden: Bool {
@@ -34,14 +34,14 @@ class CurrentInfoViewController: UIViewController, CurrentInfoController {
     }
 }
 
-struct Components {
+struct CurrentInfoComponents {
     let locationManager: CLLocationManager
     let weatherService: WeatherService
     let mapView: GMSMapView
     let timeLabel: UILabel
-    let placeLabel: UILabel
-    let weatherDescriptionLabel: UILabel
+    let summaryLabel: UILabel
     let currentTemperatureLabel: UILabel
+    let currentHumidityLabel: UILabel
     
     // Temporarily hides map to prevent background flash while map tiles are loading
     let maskView: UIView

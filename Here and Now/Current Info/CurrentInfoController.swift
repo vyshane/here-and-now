@@ -15,7 +15,7 @@ extension CurrentInfoController {
     
     // MARK: Lifecycle Methods
     
-    func initComponents(addToRootView: UIView) -> Components {
+    func initComponents(addToRootView: UIView) -> CurrentInfoComponents {
         let mapView: GMSMapView = {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
@@ -38,9 +38,9 @@ extension CurrentInfoController {
             stackView.axis = .vertical
             addToRootView.addSubview(stackView)
             stackView.easy.layout(
-                Top(16),
-                Left(8),
-                Right(8)
+                Top(8),
+                Left(16),
+                Right(16)
             )
             return stackView
         }()
@@ -48,57 +48,57 @@ extension CurrentInfoController {
         let timeLabel: UILabel = {
             let timeLabel = UILabel()
             timeLabel.textAlignment = .center
-            stackView.addArrangedSubview(timeLabel)
-            timeLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)  // San Fransisco
+            addToRootView.addSubview(timeLabel)
+            timeLabel.easy.layout(
+                Right(8), Bottom(8)
+            )
+            timeLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)  // San Fransisco
             return timeLabel
         }()
         
-        let placeLabel: UILabel = {
-            let placeLabel = FittableFontLabel()
-            placeLabel.textAlignment = .center
-            stackView.addArrangedSubview(placeLabel)
-            
+        let summaryLabel: UILabel = {
+            let summaryLabel = FittableFontLabel()
+            summaryLabel.textAlignment = .center
+            stackView.addArrangedSubview(summaryLabel)
             // Fill width
-            placeLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
-            placeLabel.numberOfLines = 1
-            placeLabel.lineBreakMode = .byWordWrapping
-            placeLabel.maxFontSize = 180
-            placeLabel.minFontScale = 0.3
-            let calculatedFontSize = timeLabel.fontSizeThatFits(text: "00:00", maxFontSize: 180,
-                                                                minFontScale: 0.3, rectSize: nil)
-            placeLabel.font = UIFont.systemFont(ofSize: calculatedFontSize, weight: .thin)
-            return placeLabel
-        }()
-        
-        let weatherDescriptionLabel: UILabel = {
-            let weatherDescriptionLabel = UILabel()
-            weatherDescriptionLabel.textAlignment = .center
-            stackView.addArrangedSubview(weatherDescriptionLabel)
-            weatherDescriptionLabel.font = UIFont.systemFont(ofSize: 30, weight: .regular)  // San Fransisco
-            return weatherDescriptionLabel
+            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)  // San Fransisco
+            summaryLabel.numberOfLines = 1
+            summaryLabel.lineBreakMode = .byWordWrapping
+            summaryLabel.maxFontSize = 180
+            summaryLabel.minFontScale = 0.1
+            summaryLabel.autoAdjustFontSize = true
+            return summaryLabel
         }()
         
         let currentTemperatureLabel: UILabel = {
             let currentTemperatureLabel = UILabel()
-            currentTemperatureLabel.textAlignment = .center
+            currentTemperatureLabel.textAlignment = .left
             stackView.addArrangedSubview(currentTemperatureLabel)
-            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 70, weight: .regular)  // San Fransisco
+            currentTemperatureLabel.font = UIFont.systemFont(ofSize: 120, weight: .thin)  // San Fransisco
             return currentTemperatureLabel
         }()
         
-        return Components(
+        let currentHumidityLabel: UILabel = {
+            let currentHumidityLabel = UILabel()
+            currentHumidityLabel.textAlignment = .left
+            stackView.addArrangedSubview(currentHumidityLabel)
+            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)  // San Fransisco
+            return currentHumidityLabel
+        }()
+        
+        return CurrentInfoComponents(
             locationManager: CLLocationManager(),
             weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
             mapView: mapView,
             timeLabel: timeLabel,
-            placeLabel: placeLabel,
-            weatherDescriptionLabel: weatherDescriptionLabel,
+            summaryLabel: summaryLabel,
             currentTemperatureLabel: currentTemperatureLabel,
+            currentHumidityLabel: currentHumidityLabel,
             maskView: maskView
         )
     }
     
-    func start(components: Components, disposedBy: DisposeBag) -> Void {
+    func start(components: CurrentInfoComponents, disposedBy: DisposeBag) -> Void {
         components.locationManager.requestWhenInUseAuthorization()
         components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
@@ -108,13 +108,15 @@ extension CurrentInfoController {
         uiScheme(forLocation: location, date: currentDate())
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().textColor
-                components.placeLabel.textColor = $0.style().textColor
+                components.summaryLabel.textColor = $0.style().textColor
+                components.currentTemperatureLabel.textColor = $0.style().textColor
+                components.currentHumidityLabel.textColor = $0.style().textColor
                 components.mapView.mapStyle = $0.style().mapStyle
                 components.maskView.backgroundColor = $0.style().defaultBackgroundColor
             })
             .disposed(by: disposedBy)
         
-        formatCurrentTime(fromDate: currentDate())
+        formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
             .bind(to: components.timeLabel.rx.text)
             .disposed(by: disposedBy)
         
@@ -139,21 +141,22 @@ extension CurrentInfoController {
         
         let weather = currentWeather(fetch: components.weatherService.fetchCurrentWeather)(location).share()
         
-        weather.map { $0.placeName }
-            .bind(to: components.placeLabel.rx.text)
-            .disposed(by: disposedBy)
-        
-        weather.map { $0.description }
-            .bind(to: components.weatherDescriptionLabel.rx.text)
+        summary(forWeather: weather)
+            .bind(to: components.summaryLabel.rx.text)
             .disposed(by: disposedBy)
         
         weather.map { $0.temperature }
             .map { self.formatTemperature($0) }
             .bind(to: components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
+        
+        weather.map { $0.humidity }
+            .map { self.formatHumidity($0) }
+            .bind(to: components.currentHumidityLabel.rx.text)
+            .disposed(by: disposedBy)
     }
     
-    func stop(components: Components) -> Void {
+    func stop(components: CurrentInfoComponents) -> Void {
         components.maskView.alpha = 1.0
         components.locationManager.stopUpdatingLocation()
     }
@@ -171,10 +174,11 @@ extension CurrentInfoController {
         }
     }
     
-    func formatCurrentTime(fromDate: Observable<Date>) -> Observable<String> {
+    func formatCurrentTime(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "hh:mm"
+            dateFormatter.dateStyle = .full
+            dateFormatter.timeStyle = .short
             return dateFormatter.string(from: $0)
         }
     }
@@ -203,7 +207,7 @@ extension CurrentInfoController {
         }
         return forLocation.flatMap { cameraPosition($0) }
     }
-    
+
     typealias WeatherFetcher = (CLLocationCoordinate2D) -> Single<Weather>
     
     // TODO: Investigate using CLGeocoder to get place name and only fetch weather if the place name changes
@@ -224,7 +228,20 @@ extension CurrentInfoController {
             }
     }
     
+    func capitalizeFirst(_ string: String) -> String {
+        return string.prefix(1).uppercased() + string.dropFirst()
+    }
+    
+    func summary(forWeather: Observable<Weather>) -> Observable<String> {
+        let capitalizeFirst: (_ string: String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+        return forWeather.map { "\(capitalizeFirst($0.description)) over \($0.placeName)" }
+    }
+    
     func formatTemperature(_ temperature: Float) -> String {
         return String(Int(temperature.rounded())) + "°"
+    }
+    
+    func formatHumidity(_ humidity: Int) -> String {
+        return String(humidity) + "%"
     }
 }
