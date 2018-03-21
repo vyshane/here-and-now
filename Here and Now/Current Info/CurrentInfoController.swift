@@ -242,6 +242,6 @@ extension CurrentInfoController {
     }
     
     func formatHumidity(_ humidity: Int) -> String {
-        return String(humidity) + "%"
+        return "h: \(String(humidity))%"
     }
 }
