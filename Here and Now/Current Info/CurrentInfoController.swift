@@ -93,7 +93,7 @@ extension CurrentInfoController {
             timeLabel.textAlignment = .center
             addToRootView.addSubview(timeLabel)
             timeLabel.easy.layout(
-                Width().like(dateLabel), Right(8), Bottom(20)
+                Width().like(dateLabel), Right(8), Bottom(4).to(dateLabel)
             )
             // Fill width
             timeLabel.font = UIFont.systemFont(ofSize: 180, weight: .regular)
