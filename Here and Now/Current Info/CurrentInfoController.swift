@@ -123,7 +123,10 @@ extension CurrentInfoController {
         components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
         
-        let location = components.locationManager.rx.location.share()
+        let location: Observable<CLLocation> = components.locationManager.rx.location
+            .skipWhile { $0 == nil }
+            .map { $0! }
+            .share(replay: 1)
         
         uiScheme(forLocation: location, date: currentDate())
             .observeOn(MainScheduler.instance)
@@ -169,7 +172,9 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         let weather = currentWeather(fetch:
-            components.weatherService.fetchCurrentWeather)(location, Locale.current.usesMetricSystem).share()
+            components.weatherService.fetchCurrentWeather)(location, Locale.current.usesMetricSystem)
+            .retry(2)
+            .share()
         
         summary(forWeather: weather)
             .asDriver(onErrorJustReturn: "")
@@ -196,12 +201,10 @@ extension CurrentInfoController {
     
     // MARK: UI State Changes
     
-    func uiScheme(forLocation: Observable<CLLocation?>, date: Observable<Date>) -> Observable<UIScheme> {
+    func uiScheme(forLocation: Observable<CLLocation>, date: Observable<Date>) -> Observable<UIScheme> {
         return Observable.zip(forLocation, date) { (l, d) in
-            if let location = l,
-                let isDaytime = isDaytime(date: d, coordinate: location.coordinate),
-                let scheme: UIScheme = isDaytime ? .light : .dark {
-                return scheme
+            if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
+                return isDayTime ? .light : .dark
             }
             return .light
         }
@@ -236,37 +239,24 @@ extension CurrentInfoController {
     
     typealias Delay = TimeInterval
     
-    func hideMaskView(whenLocationReceived: Observable<CLLocation?>) -> Observable<Delay> {
+    func hideMaskView(whenLocationReceived: Observable<CLLocation>) -> Observable<Delay> {
         return whenLocationReceived.map { _ in 1.0 }
     }
     
-    func mapCameraPosition(forLocation: Observable<CLLocation?>) -> Observable<GMSCameraPosition> {
-        let cameraPosition: (CLLocation?) -> Observable<GMSCameraPosition> = {
-            if let location = $0 {
-                return Observable.just(GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14))
-            }
-            return Observable.never()
-        }
-        return forLocation.flatMap { cameraPosition($0) }
+    func mapCameraPosition(forLocation: Observable<CLLocation>) -> Observable<GMSCameraPosition> {
+        return forLocation.map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14) }
     }
 
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
-    // TODO: Investigate using CLGeocoder to get place name and only fetch weather if the place name changes
     func currentWeather(fetch: @escaping WeatherFetcher) ->
-        (_ location: Observable<CLLocation?>, _ useMetricSystem: Bool) -> Observable<Weather> {
-            let fetchWeather: (CLLocation?, Bool) -> Observable<Weather> = {
-                if let location = $0 {
-                    return fetch(location.coordinate, $1).asObservable()
-                }
-                return Observable.never()
-            }
+        (_ location: Observable<CLLocation>, _ useMetricSystem: Bool) -> Observable<Weather> {
             return { (location, useMetricSystem) in
                 return location
-                    // It's unlikely that we would have travelled far enough that repeatedly
-                    // querying the weather service gives us different weather conditions
-                    .throttle(60, latest: true, scheduler: MainScheduler.instance)
-                    .flatMap { fetchWeather($0, useMetricSystem) }
+                    .distinctUntilChanged { (a, b) in
+                        return a.distance(from: b) < 20
+                    }
+                    .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
             }
     }
     
