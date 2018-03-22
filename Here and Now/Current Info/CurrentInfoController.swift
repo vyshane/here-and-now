@@ -171,7 +171,7 @@ extension CurrentInfoController {
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
-        let weather = currentWeather(fetch:
+        let weather = checkWeather(fetch:
             components.weatherService.fetchCurrentWeather)(location, currentDate(), Locale.current.usesMetricSystem)
             .retry(2)
             .share()
@@ -182,13 +182,13 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         weather.map { $0.temperature }
-            .map { self.formatTemperature($0) }
+            .map { self.format(temperature: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
         weather.map { $0.humidity }
-            .map { self.formatHumidity($0) }
+            .map { self.format(humidity: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.currentHumidityLabel.rx.text)
             .disposed(by: disposedBy)
@@ -249,11 +249,11 @@ extension CurrentInfoController {
 
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
-    func currentWeather(fetch: @escaping WeatherFetcher)
-        -> (_ location: Observable<CLLocation>, _ date: Observable<Date> , _ useMetricSystem: Bool)
+    func checkWeather(fetch: @escaping WeatherFetcher)
+        -> (Observable<CLLocation>, Observable<Date>, Bool)
         -> Observable<Weather> {
         return { (location, date, useMetricSystem) in
-            return Observable
+            Observable
                 .combineLatest(location, date)
                 .distinctUntilChanged { (a , b) in
                     let fiveMinutes: TimeInterval = 5 * 60
@@ -269,15 +269,15 @@ extension CurrentInfoController {
     }
     
     func summary(forWeather: Observable<Weather>) -> Observable<String> {
-        let capitalizeFirst: (_ string: String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+        let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
         return forWeather.map { "\(capitalizeFirst($0.description)) over \($0.placeName)" }
     }
     
-    func formatTemperature(_ temperature: Float) -> String {
+    func format(temperature: Float) -> String {
         return String(Int(temperature.rounded())) + "°"
     }
     
-    func formatHumidity(_ humidity: Int) -> String {
+    func format(humidity: Int) -> String {
         return "\(String(humidity))% hu"
     }
 }
