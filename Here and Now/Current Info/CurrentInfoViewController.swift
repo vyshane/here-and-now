@@ -25,7 +25,9 @@ class CurrentInfoViewController: UIViewController, CurrentInfoController {
         }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    // TODO: On rotate, mask map to prevent background flash while loading map
+    
+    override func viewWillDisappear(_ animated: Bool) {
         if let components = components {
             stop(components: components)
         }
