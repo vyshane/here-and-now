@@ -172,7 +172,7 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         let weather = currentWeather(fetch:
-            components.weatherService.fetchCurrentWeather)(location, Locale.current.usesMetricSystem)
+            components.weatherService.fetchCurrentWeather)(location, currentDate(), Locale.current.usesMetricSystem)
             .retry(2)
             .share()
         
@@ -249,15 +249,19 @@ extension CurrentInfoController {
 
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
-    func currentWeather(fetch: @escaping WeatherFetcher) ->
-        (_ location: Observable<CLLocation>, _ useMetricSystem: Bool) -> Observable<Weather> {
-            return { (location, useMetricSystem) in
-                return location
-                    .distinctUntilChanged { (a, b) in
-                        return a.distance(from: b) < 20
-                    }
-                    .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
-            }
+    func currentWeather(fetch: @escaping WeatherFetcher)
+        -> (_ location: Observable<CLLocation>, _ date: Observable<Date> , _ useMetricSystem: Bool)
+        -> Observable<Weather> {
+        return { (location, date, useMetricSystem) in
+            return Observable
+                .combineLatest(location, date)
+                .distinctUntilChanged { (a , b) in
+                    let fiveMinutes: TimeInterval = 5 * 60
+                    return a.0.distance(from: b.0) < 20 && b.1.timeIntervalSince(a.1) < fiveMinutes
+                }
+                .map { $0.0 }
+                .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
+        }
     }
     
     func capitalizeFirst(_ string: String) -> String {
