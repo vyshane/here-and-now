@@ -126,6 +126,7 @@ extension CurrentInfoController {
         let location = components.locationManager.rx.location.share()
         
         uiScheme(forLocation: location, date: currentDate())
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {
                 components.timeLabel.textColor = $0.style().textColor
                 components.dateLabel.textColor = $0.style().textColor
@@ -138,15 +139,18 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
-            .bind(to: components.timeLabel.rx.text)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.timeLabel.rx.text)
             .disposed(by: disposedBy)
         
         formatCurrentDate(fromDate: currentDate(), locale: Locale.current)
-            .bind(to: components.dateLabel.rx.text)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.dateLabel.rx.text)
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
-            .bind(to: components.mapView.rx.isHidden)
+            .asDriver(onErrorJustReturn: true)
+            .drive(components.mapView.rx.isHidden)
             .disposed(by: disposedBy)
         
         hideMaskView(whenLocationReceived: location)
@@ -168,17 +172,20 @@ extension CurrentInfoController {
             components.weatherService.fetchCurrentWeather)(location, Locale.current.usesMetricSystem).share()
         
         summary(forWeather: weather)
-            .bind(to: components.summaryLabel.rx.text)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.summaryLabel.rx.text)
             .disposed(by: disposedBy)
         
         weather.map { $0.temperature }
             .map { self.formatTemperature($0) }
-            .bind(to: components.currentTemperatureLabel.rx.text)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
         weather.map { $0.humidity }
             .map { self.formatHumidity($0) }
-            .bind(to: components.currentHumidityLabel.rx.text)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.currentHumidityLabel.rx.text)
             .disposed(by: disposedBy)
     }
     
@@ -258,7 +265,7 @@ extension CurrentInfoController {
                 return location
                     // It's unlikely that we would have travelled far enough that repeatedly
                     // querying the weather service gives us different weather conditions
-                    .throttle(60, latest: true, scheduler: MainScheduler())
+                    .throttle(60, latest: true, scheduler: MainScheduler.instance)
                     .flatMap { fetchWeather($0, useMetricSystem) }
             }
     }
