@@ -128,19 +128,6 @@ extension CurrentInfoController {
             .map { $0! }
             .share(replay: 1)
         
-        uiScheme(forLocation: location, date: currentDate())
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: {
-                components.timeLabel.textColor = $0.style().textColor
-                components.dateLabel.textColor = $0.style().textColor
-                components.summaryLabel.textColor = $0.style().textColor
-                components.currentTemperatureLabel.textColor = $0.style().textColor
-                components.currentHumidityLabel.textColor = $0.style().textColor
-                components.mapView.mapStyle = $0.style().mapStyle
-                components.maskView.backgroundColor = $0.style().defaultBackgroundColor
-            })
-            .disposed(by: disposedBy)
-        
         formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
             .asDriver(onErrorJustReturn: "")
             .drive(components.timeLabel.rx.text)
@@ -176,6 +163,18 @@ extension CurrentInfoController {
             .retry(2)
             .share()
         
+        // Less accurate; use once to initialize scheme
+        uiScheme(fromLocation: location, date: currentDate().take(1))
+            .asDriver(onErrorJustReturn: .light)
+            .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
+            .disposed(by: disposedBy)
+        
+        // More accurate; use periodically to update scheme
+        uiScheme(fromWeather: weather, date: currentDate().throttle(30, scheduler: MainScheduler.instance))
+            .asDriver(onErrorJustReturn: .light)
+            .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
+            .disposed(by: disposedBy)
+        
         summary(forWeather: weather)
             .asDriver(onErrorJustReturn: "")
             .drive(components.summaryLabel.rx.text)
@@ -199,17 +198,18 @@ extension CurrentInfoController {
         components.locationManager.stopUpdatingLocation()
     }
     
-    // MARK: UI State Changes
-    
-    func uiScheme(forLocation: Observable<CLLocation>, date: Observable<Date>) -> Observable<UIScheme> {
-        return Observable.zip(forLocation, date) { (l, d) in
-            if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
-                return isDayTime ? .light : .dark
-            }
-            return .light
-        }
+    private func setStyle(_ style: UIStyle, forComponents: CurrentInfoComponents) -> Void {
+        forComponents.timeLabel.textColor = style.textColor
+        forComponents.dateLabel.textColor = style.textColor
+        forComponents.summaryLabel.textColor = style.textColor
+        forComponents.currentTemperatureLabel.textColor = style.textColor
+        forComponents.currentHumidityLabel.textColor = style.textColor
+        forComponents.mapView.mapStyle = style.mapStyle
+        forComponents.maskView.backgroundColor = style.defaultBackgroundColor
     }
     
+    // MARK: UI State Changes
+
     func formatCurrentTime(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
@@ -262,10 +262,6 @@ extension CurrentInfoController {
                 .map { $0.0 }
                 .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
         }
-    }
-    
-    func capitalizeFirst(_ string: String) -> String {
-        return string.prefix(1).uppercased() + string.dropFirst()
     }
     
     func summary(forWeather: Observable<Weather>) -> Observable<String> {

@@ -107,8 +107,9 @@ class WeatherServiceSpec: QuickSpec {
                         expect(weather?.maximumTemperature) == 288.772
                         expect(weather?.humidity) == 100
                         expect(weather?.pressure) == 1013.75
+                        expect(weather?.sunrise) == Date(timeIntervalSince1970: Double(1485726240))
+                        expect(weather?.sunset) == Date(timeIntervalSince1970: Double(1485763863))
                     } catch {
-                        fail()
                     }
                 }
             }

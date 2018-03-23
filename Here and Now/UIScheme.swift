@@ -2,6 +2,7 @@
 
 import Foundation
 import GoogleMaps
+import RxSwift
 
 enum UIScheme {
     case light
@@ -29,6 +30,24 @@ struct UIStyle {
     let textColor: UIColor
     let defaultBackgroundColor: UIColor
     let mapStyle: GMSMapStyle
+}
+
+func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Observable<UIScheme> {
+    return Observable.combineLatest(fromLocation, date) { (l, d) in
+        if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
+            return isDayTime ? .light : .dark
+        }
+        return .light
+    }
+}
+
+func uiScheme(fromWeather: Observable<Weather>, date: Observable<Date>) -> Observable<UIScheme> {
+    return Observable.combineLatest(fromWeather, date) { (w, d) in
+        if w.sunset < d {
+            return .dark
+        }
+        return .light
+    }
 }
 
 fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
