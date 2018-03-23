@@ -43,7 +43,7 @@ func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> O
 
 func uiScheme(fromWeather: Observable<Weather>, date: Observable<Date>) -> Observable<UIScheme> {
     return Observable.combineLatest(fromWeather, date) { (w, d) in
-        if w.sunset < d {
+        if d > w.sunset && d < w.sunrise {
             return .dark
         }
         return .light
