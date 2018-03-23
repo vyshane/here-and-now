@@ -144,7 +144,8 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         hideMaskView(whenLocationReceived: location)
-            .subscribe(onNext: { delay in
+            .asDriver(onErrorJustReturn: 0)
+            .drive(onNext: { delay in
                 if (components.maskView.alpha > 0) {
                     UIView.animate(withDuration: 0.4,
                                    delay: delay,
