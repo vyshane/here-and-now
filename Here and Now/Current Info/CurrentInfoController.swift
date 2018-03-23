@@ -143,18 +143,18 @@ extension CurrentInfoController {
             .drive(components.mapView.rx.isHidden)
             .disposed(by: disposedBy)
         
-        hideMaskView(whenLocationReceived: location)
-            .asDriver(onErrorJustReturn: 0)
-            .drive(onNext: { delay in
+        components.mapView.rx.didFinishTileRendering
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: { Void in
                 if (components.maskView.alpha > 0) {
-                    UIView.animate(withDuration: 0.4,
-                                   delay: delay,
+                    UIView.animate(withDuration: 0.3,
+                                   delay: 0,
                                    options: .curveEaseOut,
                                    animations: { components.maskView.alpha = 0.0 })
                 }
             })
             .disposed(by: disposedBy)
-        
+
         mapCameraPosition(forLocation: location)
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
@@ -239,11 +239,7 @@ extension CurrentInfoController {
     }
     
     typealias Delay = TimeInterval
-    
-    func hideMaskView(whenLocationReceived: Observable<CLLocation>) -> Observable<Delay> {
-        return whenLocationReceived.map { _ in 1.0 }
-    }
-    
+
     func mapCameraPosition(forLocation: Observable<CLLocation>) -> Observable<GMSCameraPosition> {
         return forLocation.map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14) }
     }

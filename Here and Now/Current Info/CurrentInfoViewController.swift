@@ -25,14 +25,17 @@ class CurrentInfoViewController: UIViewController, CurrentInfoController {
         }
     }
     
-    // TODO: On rotate, mask map to prevent background flash while loading map
-    
     override func viewWillDisappear(_ animated: Bool) {
         if let components = components {
             stop(components: components)
         }
         disposeBag = DisposeBag()
         super.viewDidDisappear(animated)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        // Prevent flash of map background while loading tiles after screen dimension change
+        components?.maskView.alpha = 1.0
     }
 }
 
