@@ -47,6 +47,10 @@ struct CurrentInfoComponents {
     let dateLabel: UILabel
     let summaryLabel: UILabel
     let currentTemperatureLabel: UILabel
+    let minimumTemperatureLabel: UILabel
+    let maximumTemperatureLabel: UILabel
+    let lowLabel: UILabel
+    let highLabel: UILabel
     let currentHumidityLabel: UILabel
     
     // Temporarily hides map to prevent background flash while map tiles are loading

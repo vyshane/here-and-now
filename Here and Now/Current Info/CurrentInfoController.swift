@@ -62,12 +62,59 @@ extension CurrentInfoController {
         
         stackView.setCustomSpacing(8, after: summaryLabel)
         
+        let temperatureStackView: UIStackView = {
+            let temperatureStackView = UIStackView()
+            temperatureStackView.alignment = .center
+            temperatureStackView.spacing = 16
+            stackView.addArrangedSubview(temperatureStackView)
+            return temperatureStackView
+        }()
+
         let currentTemperatureLabel: UILabel = {
             let currentTemperatureLabel = UILabel()
             currentTemperatureLabel.textAlignment = .left
-            stackView.addArrangedSubview(currentTemperatureLabel)
+            temperatureStackView.addArrangedSubview(currentTemperatureLabel)
             currentTemperatureLabel.font = UIFont.systemFont(ofSize: 130, weight: .thin)
+            currentTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             return currentTemperatureLabel
+        }()
+        
+        let minimumTemperatureLabel: UILabel = {
+            let minimumTemperatureLabel = UILabel()
+            minimumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
+            minimumTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            temperatureStackView.addArrangedSubview(minimumTemperatureLabel)
+            return minimumTemperatureLabel
+        }()
+
+        let lowLabel: UILabel = {
+            let lowLabel = UILabel()
+            lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+            addToRootView.addSubview(lowLabel)
+            lowLabel.easy.layout(
+                Left(16).to(currentTemperatureLabel),
+                Top().to(minimumTemperatureLabel)
+            )
+            return lowLabel
+        }()
+
+        let maximumTemperatureLabel: UILabel = {
+            let maximumTemperatureLabel = UILabel()
+            maximumTemperatureLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            temperatureStackView.addArrangedSubview(maximumTemperatureLabel)
+            maximumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
+            return maximumTemperatureLabel
+        }()
+        
+        let highLabel: UILabel = {
+            let highLabel = UILabel()
+            highLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+            addToRootView.addSubview(highLabel)
+            highLabel.easy.layout(
+                Left(16).to(minimumTemperatureLabel),
+                Top().to(maximumTemperatureLabel)
+            )
+            return highLabel
         }()
         
         let currentHumidityLabel: UILabel = {
@@ -114,6 +161,10 @@ extension CurrentInfoController {
             dateLabel: dateLabel,
             summaryLabel: summaryLabel,
             currentTemperatureLabel: currentTemperatureLabel,
+            minimumTemperatureLabel: minimumTemperatureLabel,
+            maximumTemperatureLabel: maximumTemperatureLabel,
+            lowLabel: lowLabel,
+            highLabel: highLabel,
             currentHumidityLabel: currentHumidityLabel,
             maskView: maskView
         )
@@ -188,6 +239,28 @@ extension CurrentInfoController {
             .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
+        weather.map { $0.minimumTemperature }
+            .map { self.format(temperature: $0) }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.minimumTemperatureLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        weather.map { _ in return "Low" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.lowLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        weather.map { $0.maximumTemperature }
+            .map { self.format(temperature: $0) }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.maximumTemperatureLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        weather.map { _ in return "High" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.highLabel.rx.text)
+            .disposed(by: disposedBy)
+        
         weather.map { $0.humidity }
             .map { self.format(humidity: $0) }
             .asDriver(onErrorJustReturn: "")
@@ -206,6 +279,10 @@ extension CurrentInfoController {
         forComponents.summaryLabel.textColor = style.textColor
         forComponents.currentTemperatureLabel.textColor = style.textColor
         forComponents.currentHumidityLabel.textColor = style.textColor
+        forComponents.minimumTemperatureLabel.textColor = style.textColor
+        forComponents.maximumTemperatureLabel.textColor = style.textColor
+        forComponents.lowLabel.textColor = style.textColor
+        forComponents.highLabel.textColor = style.textColor
         forComponents.mapView.mapStyle = style.mapStyle
         forComponents.maskView.backgroundColor = style.defaultBackgroundColor
     }
@@ -272,6 +349,6 @@ extension CurrentInfoController {
     }
     
     func format(humidity: Int) -> String {
-        return "\(String(humidity))% hu"
+        return "\(String(humidity))% rh"
     }
 }
