@@ -7,6 +7,7 @@ import GoogleMaps
 import RxCoreLocation
 import RxGoogleMaps
 import RxSwift
+import RxSwiftExt
 import UIKit
 
 protocol CurrentInfoController { }
@@ -50,7 +51,7 @@ extension CurrentInfoController {
             summaryLabel.textAlignment = .center
             stackView.addArrangedSubview(summaryLabel)
             // Fill width
-            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .thin)
+            summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .light)
             summaryLabel.numberOfLines = 1
             summaryLabel.lineBreakMode = .byWordWrapping
             summaryLabel.maxFontSize = 180
@@ -73,7 +74,7 @@ extension CurrentInfoController {
             let currentHumidityLabel = UILabel()
             currentHumidityLabel.textAlignment = .left
             stackView.addArrangedSubview(currentHumidityLabel)
-            currentHumidityLabel.font = UIFont.systemFont(ofSize: 60, weight: .thin)
+            currentHumidityLabel.font = UIFont.systemFont(ofSize: 64, weight: .light)
             return currentHumidityLabel
         }()
         
@@ -161,7 +162,7 @@ extension CurrentInfoController {
         
         let weather = checkWeather(fetch:
             components.weatherService.fetchCurrentWeather)(location, currentDate(), Locale.current.usesMetricSystem)
-            .retry(2)
+            .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
         
         // Less accurate; use once to initialize scheme

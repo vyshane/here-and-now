@@ -30,6 +30,10 @@ PODS:
     - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
   - RxSwift (4.1.2)
+  - RxSwiftExt (3.2.0):
+    - RxSwiftExt/Core (= 3.2.0)
+  - RxSwiftExt/Core (3.2.0):
+    - RxSwift (~> 4.0)
   - Solar (2.1.0)
   - URITemplate (2.0.3)
 
@@ -45,6 +49,7 @@ DEPENDENCIES:
   - RxCoreLocation (~> 1.0)
   - RxGoogleMaps (~> 3.0)
   - RxSwift (~> 4.1)
+  - RxSwiftExt (~> 3.2)
   - Solar (~> 2.1)
 
 SPEC CHECKSUMS:
@@ -60,9 +65,10 @@ SPEC CHECKSUMS:
   RxCoreLocation: 720d166b2692ceae5703f1b47817ea974356fff2
   RxGoogleMaps: 8e8501ee42f2f4095c02e7794ecb0e8758358934
   RxSwift: e49536837d9901277638493ea537394d4b55f570
+  RxSwiftExt: 64b7140124629a6a084159735f3714f0fb1c61d6
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: 343af244be99d8759572c04475add5c7e08ca79b
+PODFILE CHECKSUM: ba85157f12ef48853853c83320c7ef336b4cedb1
 
 COCOAPODS: 1.4.0
