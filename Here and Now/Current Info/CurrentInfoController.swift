@@ -239,27 +239,31 @@ extension CurrentInfoController {
             .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
-        weather.map { $0.minimumTemperature }
-            .map { self.format(temperature: $0) }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.minimumTemperatureLabel.rx.text)
-            .disposed(by: disposedBy)
+        // Turn this off
+        // Minimum temperature from OpenWeatherMap current weather API isn't the daily minimum
+//        weather.map { $0.minimumTemperature }
+//            .map { self.format(temperature: $0) }
+//            .asDriver(onErrorJustReturn: "")
+//            .drive(components.minimumTemperatureLabel.rx.text)
+//            .disposed(by: disposedBy)
         
-        weather.map { _ in return "Low" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.lowLabel.rx.text)
-            .disposed(by: disposedBy)
+//        weather.map { _ in return "Low" }
+//            .asDriver(onErrorJustReturn: "")
+//            .drive(components.lowLabel.rx.text)
+//            .disposed(by: disposedBy)
         
-        weather.map { $0.maximumTemperature }
-            .map { self.format(temperature: $0) }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.maximumTemperatureLabel.rx.text)
-            .disposed(by: disposedBy)
+        // Turn this off
+        // Maximum temperature from OpenWeatherMap current weather API isn't the daily maximum
+//        weather.map { $0.maximumTemperature }
+//            .map { self.format(temperature: $0) }
+//            .asDriver(onErrorJustReturn: "")
+//            .drive(components.maximumTemperatureLabel.rx.text)
+//            .disposed(by: disposedBy)
         
-        weather.map { _ in return "High" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.highLabel.rx.text)
-            .disposed(by: disposedBy)
+//        weather.map { _ in return "High" }
+//            .asDriver(onErrorJustReturn: "")
+//            .drive(components.highLabel.rx.text)
+//            .disposed(by: disposedBy)
         
         weather.map { $0.humidity }
             .map { self.format(humidity: $0) }
