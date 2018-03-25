@@ -217,7 +217,7 @@ extension CurrentInfoController {
             .share()
         
         // Less accurate; use once to initialize scheme
-        uiScheme(fromLocation: location, date: currentDate().take(1))
+       uiScheme(fromLocation: location, date: currentDate().takeLast(1))
             .asDriver(onErrorJustReturn: .light)
             .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
             .disposed(by: disposedBy)
