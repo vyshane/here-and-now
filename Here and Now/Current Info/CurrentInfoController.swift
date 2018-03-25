@@ -227,8 +227,8 @@ extension CurrentInfoController {
             .asDriver(onErrorJustReturn: .light)
             .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
             .disposed(by: disposedBy)
-        
-        summary(forWeather: weather)
+
+        summary(forWeather: weather, placemark: components.locationManager.rx.placemark)
             .asDriver(onErrorJustReturn: "")
             .drive(components.summaryLabel.rx.text)
             .disposed(by: disposedBy)
@@ -343,9 +343,15 @@ extension CurrentInfoController {
         }
     }
     
-    func summary(forWeather: Observable<Weather>) -> Observable<String> {
-        let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
-        return forWeather.map { "\(capitalizeFirst($0.description)) over \($0.placeName)" }
+    func summary(forWeather: Observable<Weather>, placemark: Observable<CLPlacemark>) -> Observable<String> {
+        return Observable
+            .combineLatest(forWeather, placemark) { (w, p) in
+                let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+                if let locality = p.locality {
+                    return "\(capitalizeFirst(w.description)) over \(locality)"
+                }
+                return "\(capitalizeFirst(w.description))"
+            }
     }
     
     func format(temperature: Float) -> String {
