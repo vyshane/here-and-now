@@ -155,7 +155,7 @@ extension CurrentInfoController {
         
         return CurrentInfoComponents(
             locationManager: CLLocationManager(),
-            weatherService: WeatherService(apiKey: Config().openWeatherMapAPIKey),
+            weatherService: WeatherService(apiKey: Config().darkSkyApiKey),
             mapView: mapView,
             timeLabel: timeLabel,
             dateLabel: dateLabel,
@@ -239,31 +239,27 @@ extension CurrentInfoController {
             .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
-        // Turn this off
-        // Minimum temperature from OpenWeatherMap current weather API isn't the daily minimum
-//        weather.map { $0.minimumTemperature }
-//            .map { self.format(temperature: $0) }
-//            .asDriver(onErrorJustReturn: "")
-//            .drive(components.minimumTemperatureLabel.rx.text)
-//            .disposed(by: disposedBy)
+        weather.map { $0.minimumTemperature }
+            .map { self.format(temperature: $0) }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.minimumTemperatureLabel.rx.text)
+            .disposed(by: disposedBy)
         
-//        weather.map { _ in return "Low" }
-//            .asDriver(onErrorJustReturn: "")
-//            .drive(components.lowLabel.rx.text)
-//            .disposed(by: disposedBy)
+        weather.map { _ in return "Low" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.lowLabel.rx.text)
+            .disposed(by: disposedBy)
         
-        // Turn this off
-        // Maximum temperature from OpenWeatherMap current weather API isn't the daily maximum
-//        weather.map { $0.maximumTemperature }
-//            .map { self.format(temperature: $0) }
-//            .asDriver(onErrorJustReturn: "")
-//            .drive(components.maximumTemperatureLabel.rx.text)
-//            .disposed(by: disposedBy)
+        weather.map { $0.maximumTemperature }
+            .map { self.format(temperature: $0) }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.maximumTemperatureLabel.rx.text)
+            .disposed(by: disposedBy)
         
-//        weather.map { _ in return "High" }
-//            .asDriver(onErrorJustReturn: "")
-//            .drive(components.highLabel.rx.text)
-//            .disposed(by: disposedBy)
+        weather.map { _ in return "High" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.highLabel.rx.text)
+            .disposed(by: disposedBy)
         
         weather.map { $0.humidity }
             .map { self.format(humidity: $0) }
@@ -358,7 +354,7 @@ extension CurrentInfoController {
         return String(Int(temperature.rounded())) + "°"
     }
     
-    func format(humidity: Int) -> String {
-        return "\(String(humidity))% rh"
+    func format(humidity: Float) -> String {
+        return "\(String(Int((humidity * 100).rounded())))% rh"
     }
 }

@@ -4,5 +4,5 @@ import Foundation
 
 struct Config {
     let googleMobileServicesAPIKey = ""
-    let openWeatherMapAPIKey = ""
+    let darkSkyApiKey = ""
 }

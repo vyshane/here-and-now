@@ -3,55 +3,52 @@
 import Foundation
 
 struct Weather {
-    var placeName: String
     var description: String
     var temperature: Float
     var minimumTemperature: Float
     var maximumTemperature: Float
-    var humidity: Int
+    var humidity: Float
     var pressure: Float
     var sunrise: Date
     var sunset: Date
     
-    init(fromJSON: CurrentWeatherJSON) {
-        let weather = fromJSON.weather[0]
-        let main = fromJSON.main
-        let sys = fromJSON.sys
-        placeName = fromJSON.name
-        description = weather.description
-        temperature = main.temp
-        minimumTemperature = main.temp_min
-        maximumTemperature = main.temp_max
-        humidity = main.humidity
-        pressure = main.pressure
-        sunrise = Date.init(timeIntervalSince1970: Double(sys.sunrise))
-        sunset = Date.init(timeIntervalSince1970: Double(sys.sunset))
+    init(fromJSON: ForecastJSON) {
+        let currently = fromJSON.currently
+        let today = fromJSON.daily.data[0]
+        description = currently.summary
+        temperature = currently.temperature
+        minimumTemperature = today.temperatureLow
+        maximumTemperature = today.temperatureHigh
+        humidity = currently.humidity
+        pressure = currently.pressure
+        sunrise = Date.init(timeIntervalSince1970: Double(today.sunriseTime))
+        sunset = Date.init(timeIntervalSince1970: Double(today.sunsetTime))
     }
 }
 
-// MARK: OpenWeatherMap JSON structures for current weather web service
+// MARK: Dark Sky API JSON structures for current weather web service
 
-struct CurrentWeatherJSON: Decodable {
-    let name: String
-    let sys: SysJSON
-    let weather: [WeatherJSON]
-    let main: MainJSON
+struct ForecastJSON: Decodable {
+    let currently: CurrentlyJSON
+    let daily: DailyJSON
 }
 
-struct SysJSON: Decodable {
-    let sunrise: Int
-    let sunset: Int
-}
-
-struct WeatherJSON: Decodable {
-    let main: String
-    let description: String
-}
-
-struct MainJSON: Decodable {
-    let temp: Float
+struct CurrentlyJSON: Decodable {
+    let summary: String
+    let temperature: Float
+    let humidity: Float
     let pressure: Float
-    let humidity: Int
-    let temp_min: Float
-    let temp_max: Float
 }
+
+struct DailyJSON: Decodable {
+    let data: Array<DailyDataJSON>
+}
+
+struct DailyDataJSON: Decodable {
+    let time: Int
+    let sunriseTime: Int
+    let sunsetTime: Int
+    let temperatureLow: Float
+    let temperatureHigh: Float
+}
+
