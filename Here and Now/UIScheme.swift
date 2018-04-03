@@ -13,12 +13,14 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.1, alpha: 1.0),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.3),
                 defaultBackgroundColor: .white,
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
                 defaultBackgroundColor: .black,
                 mapStyle: darkMapStyle
             )
@@ -28,6 +30,7 @@ enum UIScheme {
 
 struct UIStyle {
     let textColor: UIColor
+    let hudBackgroundColor: UIColor
     let defaultBackgroundColor: UIColor
     let mapStyle: GMSMapStyle
 }

@@ -21,7 +21,7 @@ extension CurrentInfoController {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
             mapView.isBuildingsEnabled = true
-            mapView.settings.setAllGesturesEnabled(false)
+            mapView.isMyLocationEnabled = true
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
             return mapView
@@ -35,10 +35,18 @@ extension CurrentInfoController {
             return maskView
         }()
         
+        let hud: UIView = {
+            let hud = UIView()
+            hud.isUserInteractionEnabled = false
+            addToRootView.addSubview(hud)
+            hud.easy.layout(Edges())
+            return hud
+        }()
+        
         let stackView: UIStackView = {
             let stackView = UIStackView()
             stackView.axis = .vertical
-            addToRootView.addSubview(stackView)
+            hud.addSubview(stackView)
             stackView.easy.layout(
                 Top(8),
                 Left(16),
@@ -91,7 +99,7 @@ extension CurrentInfoController {
         let lowLabel: UILabel = {
             let lowLabel = UILabel()
             lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-            addToRootView.addSubview(lowLabel)
+            hud.addSubview(lowLabel)
             lowLabel.easy.layout(
                 Left(16).to(currentTemperatureLabel),
                 Top().to(minimumTemperatureLabel)
@@ -110,7 +118,7 @@ extension CurrentInfoController {
         let highLabel: UILabel = {
             let highLabel = UILabel()
             highLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-            addToRootView.addSubview(highLabel)
+            hud.addSubview(highLabel)
             highLabel.easy.layout(
                 Left(16).to(minimumTemperatureLabel),
                 Top().to(maximumTemperatureLabel)
@@ -129,7 +137,7 @@ extension CurrentInfoController {
         let dateLabel: UILabel = {
             let dateLabel = UILabel()
             dateLabel.textAlignment = .center
-            addToRootView.addSubview(dateLabel)
+            hud.addSubview(dateLabel)
             dateLabel.easy.layout(
                 Right(8), Bottom(8)
             )
@@ -140,7 +148,7 @@ extension CurrentInfoController {
         let timeLabel: UILabel = {
             let timeLabel = FittableFontLabel()
             timeLabel.textAlignment = .center
-            addToRootView.addSubview(timeLabel)
+            hud.addSubview(timeLabel)
             timeLabel.easy.layout(
                 Width().like(dateLabel), Right(8), Bottom(4).to(dateLabel)
             )
@@ -158,6 +166,7 @@ extension CurrentInfoController {
             locationManager: CLLocationManager(),
             weatherService: WeatherService(apiKey: Config().darkSkyApiKey),
             mapView: mapView,
+            hud: hud,
             timeLabel: timeLabel,
             dateLabel: dateLabel,
             summaryLabel: summaryLabel,
@@ -179,6 +188,7 @@ extension CurrentInfoController {
         let location: Observable<CLLocation> = components.locationManager.rx.location
             .skipWhile { $0 == nil }
             .map { $0! }
+            .take(1)
             .share(replay: 1)
         
         formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
@@ -200,10 +210,34 @@ extension CurrentInfoController {
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: { Void in
                 if (components.maskView.alpha > 0) {
-                    UIView.animate(withDuration: 0.3,
+                    UIView.animate(withDuration: 0.5,
                                    delay: 0,
                                    options: .curveEaseOut,
                                    animations: { components.maskView.alpha = 0.0 })
+                }
+            })
+            .disposed(by: disposedBy)
+        
+        components.mapView.rx.willMove
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { _ in
+                if (components.hud.alpha > 0) {
+                    UIView.animate(withDuration: 0.5,
+                                   delay: 0,
+                                   options: .curveEaseOut,
+                                   animations: { components.hud.alpha = 0.0 })
+                }
+            })
+            .disposed(by: disposedBy)
+        
+        components.mapView.rx.idleAt
+            .asDriver(onErrorJustReturn: GMSCameraPosition())
+            .drive(onNext: { Void in
+                if (components.hud.alpha < 1) {
+                    UIView.animate(withDuration: 0.5,
+                                   delay: 0,
+                                   options: .curveEaseOut,
+                                   animations: { components.hud.alpha = 1 })
                 }
             })
             .disposed(by: disposedBy)
@@ -268,6 +302,7 @@ extension CurrentInfoController {
     }
     
     private func setStyle(_ style: UIStyle, forComponents: CurrentInfoComponents) -> Void {
+        forComponents.hud.backgroundColor = style.hudBackgroundColor
         forComponents.timeLabel.textColor = style.textColor
         forComponents.dateLabel.textColor = style.textColor
         forComponents.summaryLabel.textColor = style.textColor

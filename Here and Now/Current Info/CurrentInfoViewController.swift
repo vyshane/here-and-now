@@ -43,6 +43,7 @@ struct CurrentInfoComponents {
     let locationManager: CLLocationManager
     let weatherService: WeatherService
     let mapView: GMSMapView
+    let hud: UIView
     let timeLabel: UILabel
     let dateLabel: UILabel
     let summaryLabel: UILabel
