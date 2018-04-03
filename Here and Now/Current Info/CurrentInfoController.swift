@@ -20,6 +20,7 @@ extension CurrentInfoController {
         let mapView: GMSMapView = {
             GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
             let mapView = GMSMapView()
+            mapView.isBuildingsEnabled = true
             mapView.settings.setAllGesturesEnabled(false)
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
@@ -312,7 +313,9 @@ extension CurrentInfoController {
     typealias Delay = TimeInterval
 
     func mapCameraPosition(forLocation: Observable<CLLocation>) -> Observable<GMSCameraPosition> {
-        return forLocation.map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14) }
+        return forLocation.map {
+            GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 17, bearing: 0, viewingAngle: 15)
+        }
     }
 
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
