@@ -41,15 +41,6 @@ func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> O
     }
 }
 
-func uiScheme(fromWeather: Observable<Weather>, date: Observable<Date>) -> Observable<UIScheme> {
-    return Observable.combineLatest(fromWeather, date) { (w, d) in
-        if d > w.sunrise && d < w.sunset {
-            return .light
-        }
-        return .dark
-    }
-}
-
 fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
     [
       {

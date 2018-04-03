@@ -216,18 +216,11 @@ extension CurrentInfoController {
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
         
-        // Less accurate; use once to initialize scheme
-       uiScheme(fromLocation: location, date: currentDate().take(1))
+        uiScheme(fromLocation: location, date: currentDate().throttle(60, scheduler: MainScheduler.instance))
             .asDriver(onErrorJustReturn: .light)
             .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
             .disposed(by: disposedBy)
         
-        // More accurate; use periodically to update scheme
-        uiScheme(fromWeather: weather, date: currentDate().throttle(30, scheduler: MainScheduler.instance))
-            .asDriver(onErrorJustReturn: .light)
-            .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
-            .disposed(by: disposedBy)
-
         summary(forWeather: weather, placemark: components.locationManager.rx.placemark)
             .asDriver(onErrorJustReturn: "")
             .drive(components.summaryLabel.rx.text)
