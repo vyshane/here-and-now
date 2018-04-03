@@ -13,14 +13,14 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.1, alpha: 1.0),
-                hudBackgroundColor: UIColor.white.withAlphaComponent(0.3),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.2),
                 defaultBackgroundColor: .white,
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
-                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.2),
                 defaultBackgroundColor: .black,
                 mapStyle: darkMapStyle
             )
