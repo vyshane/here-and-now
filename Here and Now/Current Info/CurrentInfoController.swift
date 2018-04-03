@@ -314,7 +314,7 @@ extension CurrentInfoController {
 
     func mapCameraPosition(forLocation: Observable<CLLocation>) -> Observable<GMSCameraPosition> {
         return forLocation.map {
-            GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 17, bearing: 0, viewingAngle: 15)
+            GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 45)
         }
     }
 
