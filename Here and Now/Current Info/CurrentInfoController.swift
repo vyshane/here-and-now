@@ -22,11 +22,12 @@ extension CurrentInfoController {
             let mapView = GMSMapView()
             mapView.isBuildingsEnabled = true
             mapView.isMyLocationEnabled = true
+            mapView.setMinZoom(2.0, maxZoom: 18.0)
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
             return mapView
         }()
-        
+
         let maskView: UIView = {
             let maskView = UIView()
             maskView.backgroundColor = UIColor.black
@@ -185,12 +186,6 @@ extension CurrentInfoController {
         components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
         
-        let location: Observable<CLLocation> = components.locationManager.rx.location
-            .skipWhile { $0 == nil }
-            .map { $0! }
-            .take(1)
-            .share(replay: 1)
-        
         formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
             .asDriver(onErrorJustReturn: "")
             .drive(components.timeLabel.rx.text)
@@ -230,9 +225,11 @@ extension CurrentInfoController {
             })
             .disposed(by: disposedBy)
         
-        components.mapView.rx.idleAt
+        let idleCameraPosition = components.mapView.rx.idleAt.share()
+
+        idleCameraPosition
             .asDriver(onErrorJustReturn: GMSCameraPosition())
-            .drive(onNext: { Void in
+            .drive(onNext: { _ in
                 if (components.hud.alpha < 1) {
                     UIView.animate(withDuration: 0.5,
                                    delay: 0,
@@ -242,21 +239,29 @@ extension CurrentInfoController {
             })
             .disposed(by: disposedBy)
 
-        mapCameraPosition(forLocation: location)
+        let location: Observable<CLLocation> = components.locationManager.rx.location
+            .skipWhile { $0 == nil }
+            .map { $0! }
+            .share(replay: 1)
+        
+        location
+            .take(1)
+            .map(toCameraPosition)
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
-        let weather = checkWeather(fetch:
-            components.weatherService.fetchCurrentWeather)(location, currentDate(), Locale.current.usesMetricSystem)
+        let weather = checkWeather(fetch: components.weatherService.fetchCurrentWeather)(
+                idleCameraPosition.map(toLocation), currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
         
-        uiScheme(fromLocation: location, date: currentDate().throttle(60, scheduler: MainScheduler.instance))
+        uiScheme(fromLocation: idleCameraPosition.map(toLocation),
+                 date: currentDate().throttle(60, scheduler: MainScheduler.instance))
             .asDriver(onErrorJustReturn: .light)
             .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
             .disposed(by: disposedBy)
         
-        summary(forWeather: weather, placemark: components.locationManager.rx.placemark)
+        summary(reverseGeocode: CLGeocoder().rx.reverseGeocode)(weather, idleCameraPosition.map(toLocation))
             .asDriver(onErrorJustReturn: "")
             .drive(components.summaryLabel.rx.text)
             .disposed(by: disposedBy)
@@ -347,12 +352,14 @@ extension CurrentInfoController {
     
     typealias Delay = TimeInterval
 
-    func mapCameraPosition(forLocation: Observable<CLLocation>) -> Observable<GMSCameraPosition> {
-        return forLocation.map {
-            GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 45)
-        }
+    func toCameraPosition(_ location: CLLocation) -> GMSCameraPosition {
+        return GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14, bearing: 0, viewingAngle: 45)
     }
-
+    
+    func toLocation(_ position: GMSCameraPosition) -> CLLocation {
+        return CLLocation(latitude: position.target.latitude, longitude: position.target.longitude)
+    }
+    
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
     func checkWeather(fetch: @escaping WeatherFetcher)
@@ -370,15 +377,24 @@ extension CurrentInfoController {
         }
     }
     
-    func summary(forWeather: Observable<Weather>, placemark: Observable<CLPlacemark>) -> Observable<String> {
-        return Observable
-            .combineLatest(forWeather, placemark) { (w, p) in
-                let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
-                if let locality = p.locality {
-                    return "\(capitalizeFirst(w.description)) over \(locality)"
+    typealias ReverseGeocode = (CLLocation) -> Observable<[CLPlacemark]>
+
+    func summary(reverseGeocode: @escaping ReverseGeocode)
+        -> (Observable<Weather>, Observable<CLLocation>)
+        -> Observable<String> {
+        return { (weather, location) in
+            let placemark = location
+                .flatMap { CLGeocoder().rx.reverseGeocode(location: $0) }
+                .map { $0.first }
+            return Observable
+                .combineLatest(weather, placemark) { (w, p) in
+                    let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+                    if let locality = p?.locality {
+                        return "\(capitalizeFirst(w.description)) over \(locality)"
+                    }
+                    return "\(capitalizeFirst(w.description))"
                 }
-                return "\(capitalizeFirst(w.description))"
-            }
+        }
     }
     
     func format(temperature: Float) -> String {
