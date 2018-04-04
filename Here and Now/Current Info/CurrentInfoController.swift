@@ -328,6 +328,7 @@ extension CurrentInfoController {
     func formatCurrentTime(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
+            dateFormatter.locale = locale
             dateFormatter.timeStyle = .short
             dateFormatter.dateStyle = .none
             return dateFormatter.string(from: $0)
@@ -337,6 +338,7 @@ extension CurrentInfoController {
     func formatCurrentDate(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
         return fromDate.map {
             let dateFormatter = DateFormatter()
+            dateFormatter.locale = locale
             dateFormatter.dateStyle = .full
             dateFormatter.timeStyle = .none
             return dateFormatter.string(from: $0)
