@@ -186,16 +186,6 @@ extension CurrentInfoController {
         components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
         
-        formatCurrentTime(fromDate: currentDate(), locale: Locale.current)
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.timeLabel.rx.text)
-            .disposed(by: disposedBy)
-        
-        formatCurrentDate(fromDate: currentDate(), locale: Locale.current)
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.dateLabel.rx.text)
-            .disposed(by: disposedBy)
-        
         shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
             .asDriver(onErrorJustReturn: true)
             .drive(components.mapView.rx.isHidden)
@@ -237,7 +227,20 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         let idleCameraPosition = components.mapView.rx.idleAt.share()
+        let idleCameraLocation = idleCameraPosition.map(toLocation).share()
+        let placemark = getPlacemark(reverseGeocode: CLGeocoder().rx.reverseGeocode)(idleCameraLocation).share()
         
+        formatCurrentTime(fromDate: currentDate(), placemark: placemark, locale: Locale.current)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.timeLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+        formatCurrentDate(fromDate: currentDate(), placemark: placemark, locale: Locale.current)
+            .asDriver(onErrorJustReturn: "")
+            .drive(components.dateLabel.rx.text)
+            .disposed(by: disposedBy)
+        
+
         let weather = checkWeather(fetch: components.weatherService.fetchCurrentWeather)(
                 idleCameraPosition.map(toLocation), currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
@@ -257,13 +260,12 @@ extension CurrentInfoController {
             })
             .disposed(by: disposedBy)
 
-        uiScheme(fromLocation: idleCameraPosition.map(toLocation),
-                 date: currentDate().throttle(60, scheduler: MainScheduler.instance))
+        uiScheme(fromLocation: idleCameraLocation, date: currentDate().throttle(60, scheduler: MainScheduler.instance))
             .asDriver(onErrorJustReturn: .light)
             .drive(onNext: { self.setStyle($0.style(), forComponents: components) })
             .disposed(by: disposedBy)
         
-        summary(reverseGeocode: CLGeocoder().rx.reverseGeocode)(weather, idleCameraPosition.map(toLocation))
+        summary(forWeather: weather, placemark: placemark)
             .asDriver(onErrorJustReturn: "")
             .drive(components.summaryLabel.rx.text)
             .disposed(by: disposedBy)
@@ -325,24 +327,32 @@ extension CurrentInfoController {
     
     // MARK: UI State Changes
 
-    func formatCurrentTime(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
-        return fromDate.map {
-            let dateFormatter = DateFormatter()
-            dateFormatter.locale = locale
-            dateFormatter.timeStyle = .short
-            dateFormatter.dateStyle = .none
-            return dateFormatter.string(from: $0)
-        }
+    func formatCurrentTime(fromDate: Observable<Date>, placemark: Observable<CLPlacemark>,
+                           locale: Locale) -> Observable<String> {
+        return Observable
+            .combineLatest(fromDate, placemark)
+            .map {
+                let dateFormatter = DateFormatter()
+                dateFormatter.timeZone = $0.1.timeZone
+                dateFormatter.locale = locale
+                dateFormatter.timeStyle = .short
+                dateFormatter.dateStyle = .none
+                return dateFormatter.string(from: $0.0)
+            }
     }
     
-    func formatCurrentDate(fromDate: Observable<Date>, locale: Locale) -> Observable<String> {
-        return fromDate.map {
-            let dateFormatter = DateFormatter()
-            dateFormatter.locale = locale
-            dateFormatter.dateStyle = .full
-            dateFormatter.timeStyle = .none
-            return dateFormatter.string(from: $0)
-        }
+    func formatCurrentDate(fromDate: Observable<Date>, placemark: Observable<CLPlacemark>,
+                           locale: Locale) -> Observable<String> {
+        return Observable
+            .combineLatest(fromDate, placemark)
+            .map {
+                let dateFormatter = DateFormatter()
+                dateFormatter.timeZone = $0.1.timeZone
+                dateFormatter.locale = locale
+                dateFormatter.dateStyle = .full
+                dateFormatter.timeStyle = .none
+                return dateFormatter.string(from: $0.0)
+            }
     }
     
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
@@ -364,6 +374,17 @@ extension CurrentInfoController {
         return CLLocation(latitude: position.target.latitude, longitude: position.target.longitude)
     }
     
+    typealias ReverseGeocode = (CLLocation) -> Observable<[CLPlacemark]>
+    
+    func getPlacemark(reverseGeocode: @escaping ReverseGeocode) -> (Observable<CLLocation>) -> Observable<CLPlacemark> {
+        return {
+            $0.flatMap(CLGeocoder().rx.reverseGeocode)
+                .map { $0.first }
+                .filter { $0 != nil }
+                .map { $0! }
+        }
+    }
+
     typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
     func checkWeather(fetch: @escaping WeatherFetcher)
@@ -380,25 +401,16 @@ extension CurrentInfoController {
                 .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
         }
     }
-    
-    typealias ReverseGeocode = (CLLocation) -> Observable<[CLPlacemark]>
 
-    func summary(reverseGeocode: @escaping ReverseGeocode)
-        -> (Observable<Weather>, Observable<CLLocation>)
-        -> Observable<String> {
-        return { (weather, location) in
-            let placemark = location
-                .flatMap { CLGeocoder().rx.reverseGeocode(location: $0) }
-                .map { $0.first }
-            return Observable
-                .combineLatest(weather, placemark) { (w, p) in
-                    let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
-                    if let locality = p?.locality {
-                        return "\(capitalizeFirst(w.description)) over \(locality)"
-                    }
-                    return "\(capitalizeFirst(w.description))"
+    func summary(forWeather: Observable<Weather>, placemark: Observable<CLPlacemark>) -> Observable<String> {
+        return Observable
+            .combineLatest(forWeather, placemark) { (w, p) in
+                let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+                if let locality = p.locality {
+                    return "\(capitalizeFirst(w.description)) over \(locality)"
                 }
-        }
+                return "\(capitalizeFirst(w.description))"
+            }
     }
     
     func format(temperature: Float) -> String {
