@@ -58,13 +58,13 @@ extension CurrentInfoController {
         
         let summaryLabel: UILabel = {
             let summaryLabel = FittableFontLabel()
-            summaryLabel.textAlignment = .center
+            summaryLabel.textAlignment = .left
             stackView.addArrangedSubview(summaryLabel)
             // Fill width
             summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .light)
             summaryLabel.numberOfLines = 1
             summaryLabel.lineBreakMode = .byWordWrapping
-            summaryLabel.maxFontSize = 180
+            summaryLabel.maxFontSize = 64
             summaryLabel.minFontScale = 0.1
             summaryLabel.autoAdjustFontSize = true
             return summaryLabel
@@ -224,20 +224,6 @@ extension CurrentInfoController {
                 }
             })
             .disposed(by: disposedBy)
-        
-        let idleCameraPosition = components.mapView.rx.idleAt.share()
-
-        idleCameraPosition
-            .asDriver(onErrorJustReturn: GMSCameraPosition())
-            .drive(onNext: { _ in
-                if (components.hud.alpha < 1) {
-                    UIView.animate(withDuration: 0.5,
-                                   delay: 0,
-                                   options: .curveEaseOut,
-                                   animations: { components.hud.alpha = 1 })
-                }
-            })
-            .disposed(by: disposedBy)
 
         let location: Observable<CLLocation> = components.locationManager.rx.location
             .skipWhile { $0 == nil }
@@ -250,11 +236,27 @@ extension CurrentInfoController {
             .bind(to: components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
+        let idleCameraPosition = components.mapView.rx.idleAt.share()
+        
         let weather = checkWeather(fetch: components.weatherService.fetchCurrentWeather)(
                 idleCameraPosition.map(toLocation), currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
         
+        Observable
+            .zip(weather, idleCameraPosition)
+            .map { (_, _) in () }
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: { _ in
+                if (components.hud.alpha < 1) {
+                    UIView.animate(withDuration: 0.5,
+                                   delay: 0,
+                                   options: .curveEaseOut,
+                                   animations: { components.hud.alpha = 1 })
+                }
+            })
+            .disposed(by: disposedBy)
+
         uiScheme(fromLocation: idleCameraPosition.map(toLocation),
                  date: currentDate().throttle(60, scheduler: MainScheduler.instance))
             .asDriver(onErrorJustReturn: .light)
