@@ -204,15 +204,10 @@ extension CurrentInfoController {
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { _ in self.fadeOut(view: components.hud, duration: 0.5) })
             .disposed(by: disposedBy)
-
-        let location: Observable<CLLocation> = components.locationManager.rx.location
-            .filterNil()
-            .share(replay: 1)
         
-        location
-            .take(1)
-            .map(toCameraPosition)
-            .bind(to: components.mapView.rx.cameraToAnimate)
+        initialCameraPosition(forLocation: components.locationManager.rx.location)
+            .asDriver(onErrorJustReturn: GMSCameraPosition())
+            .drive(components.mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
         let idleCameraPosition = components.mapView.rx.idleAt.share()
@@ -309,6 +304,14 @@ extension CurrentInfoController {
             case _: return false
             }
         }
+    }
+    
+    func initialCameraPosition(forLocation: Observable<CLLocation?>) -> Single<GMSCameraPosition> {
+        return forLocation
+            .filterNil()
+            .take(1)
+            .map(toCameraPosition)
+            .asSingle()
     }
     
     typealias FetchWeather = (CLLocationCoordinate2D, Bool) -> Single<Weather>
