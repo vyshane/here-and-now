@@ -287,7 +287,7 @@ extension CurrentInfoController {
     }
     
     func stop(components: CurrentInfoComponents) -> Void {
-        components.maskView.alpha = 1.0
+        fadeIn(view: components.maskView, duration: 0)
         components.locationManager.stopUpdatingLocation()
     }
     
@@ -317,17 +317,18 @@ extension CurrentInfoController {
         }
     }
     
-    typealias WeatherFetcher = (CLLocationCoordinate2D, Bool) -> Single<Weather>
+    typealias FetchWeather = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
-    func checkWeather(fetch: @escaping WeatherFetcher)
+    func checkWeather(fetch: @escaping FetchWeather)
         -> (Observable<CLLocation>, Observable<Date>, Bool)
         -> Observable<Weather> {
         return { (location, date, useMetricSystem) in
-            Observable
+            return Observable
                 .combineLatest(location, date)
-                .distinctUntilChanged { (a , b) in
-                    let fiveMinutes: TimeInterval = 5 * 60
-                    return a.0.distance(from: b.0) < 20 && b.1.timeIntervalSince(a.1) < fiveMinutes
+                .distinctUntilChanged { (a, b) in
+                    let insufficientTimeElapsed: (Date, Date) -> Bool = { $1.timeIntervalSince($0) < 5 * 60 }
+                    let insignificantMovement: (CLLocation, CLLocation) -> Bool = { $0.distance(from: $1) < 20 }
+                    return insignificantMovement(a.0, b.0) && insufficientTimeElapsed(a.1, b.1)
                 }
                 .map { $0.0 }
                 .flatMapLatest { fetch($0.coordinate, useMetricSystem) }
