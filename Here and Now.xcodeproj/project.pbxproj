@@ -12,6 +12,7 @@
 		3429615F20503809005803AE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3429615E20503809005803AE /* Time.swift */; };
 		34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */; };
 		349266FF2061C7EE003371C8 /* CurrentInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349266FE2061C7EE003371C8 /* CurrentInfoController.swift */; };
+		34A0E80D2076B0830086FA51 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A0E80C2076B0830086FA51 /* Location.swift */; };
 		34DFAEFD204F59E7007E6B45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAEFC204F59E7007E6B45 /* AppDelegate.swift */; };
 		34DFAEFF204F59E7007E6B45 /* CurrentInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAEFE204F59E7007E6B45 /* CurrentInfoViewController.swift */; };
 		34DFAF02204F59E7007E6B45 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34DFAF00204F59E7007E6B45 /* Main.storyboard */; };
@@ -50,6 +51,7 @@
 		3429615E20503809005803AE /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLGeocoder+Rx.swift"; sourceTree = "<group>"; };
 		349266FE2061C7EE003371C8 /* CurrentInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoController.swift; sourceTree = "<group>"; };
+		34A0E80C2076B0830086FA51 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		34DFAEF9204F59E7007E6B45 /* Here and Now.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Here and Now.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DFAEFC204F59E7007E6B45 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34DFAEFE204F59E7007E6B45 /* CurrentInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoViewController.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */,
+				34A0E80C2076B0830086FA51 /* Location.swift */,
 			);
 			name = Location;
 			path = "New Group";
@@ -262,7 +265,6 @@
 				34DFAF0A204F59E7007E6B45 /* Frameworks */,
 				34DFAF0B204F59E7007E6B45 /* Resources */,
 				4CADE69344EFA3221D94E1DD /* [CP] Embed Pods Frameworks */,
-				7DF9BF3F7B39DF06E5C05A71 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -283,7 +285,6 @@
 				34DFAF15204F59E7007E6B45 /* Frameworks */,
 				34DFAF16204F59E7007E6B45 /* Resources */,
 				9B5A3ECDF573DCEA2253C8AC /* [CP] Embed Pods Frameworks */,
-				9E346BFF50323E1063BA3FE9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -453,21 +454,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7DF9BF3F7B39DF06E5C05A71 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Here and Now Tests/Pods-Here and Now Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		9B5A3ECDF573DCEA2253C8AC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -486,21 +472,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Here and Now UI Tests/Pods-Here and Now UI Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9E346BFF50323E1063BA3FE9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Here and Now UI Tests/Pods-Here and Now UI Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EC03E2F7036F32E6B3C9F512 /* [CP] Copy Pods Resources */ = {
@@ -532,6 +503,7 @@
 				"${BUILT_PRODUCTS_DIR}/FittableFontLabel/FittableFontLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCoreLocation/RxCoreLocation.framework",
+				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwiftExt/RxSwiftExt.framework",
 				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
@@ -542,6 +514,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FittableFontLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCoreLocation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwiftExt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
@@ -560,6 +533,7 @@
 			files = (
 				34DFAF2F204F5E16007E6B45 /* WeatherService.swift in Sources */,
 				34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */,
+				34A0E80D2076B0830086FA51 /* Location.swift in Sources */,
 				349266FF2061C7EE003371C8 /* CurrentInfoController.swift in Sources */,
 				34DFAEFF204F59E7007E6B45 /* CurrentInfoViewController.swift in Sources */,
 				34DFAEFD204F59E7007E6B45 /* AppDelegate.swift in Sources */,

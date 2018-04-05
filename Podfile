@@ -5,6 +5,7 @@ target 'Here and Now' do
   use_frameworks!
   pod 'RxSwift', '~> 4.1'
   pod 'RxSwiftExt', '~> 3.2'
+  pod 'RxOptional', '~> 3.3'
   pod 'RxCocoa', '~> 4.1'
   pod 'RxCoreLocation', '~> 1.0'
   pod 'EasyPeasy', '~> 1.6'

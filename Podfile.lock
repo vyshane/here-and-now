@@ -29,6 +29,9 @@ PODS:
     - GoogleMaps (~> 2.6.0)
     - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
+  - RxOptional (3.3.0):
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
   - RxSwift (4.1.2)
   - RxSwiftExt (3.2.0):
     - RxSwiftExt/Core (= 3.2.0)
@@ -48,9 +51,29 @@ DEPENDENCIES:
   - RxCocoa (~> 4.1)
   - RxCoreLocation (~> 1.0)
   - RxGoogleMaps (~> 3.0)
+  - RxOptional (~> 3.3)
   - RxSwift (~> 4.1)
   - RxSwiftExt (~> 3.2)
   - Solar (~> 2.1)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - EasyPeasy
+    - Fakery
+    - FittableFontLabel
+    - GoogleMaps
+    - Mockingjay
+    - Nimble
+    - Quick
+    - RxBlocking
+    - RxCocoa
+    - RxCoreLocation
+    - RxGoogleMaps
+    - RxOptional
+    - RxSwift
+    - RxSwiftExt
+    - Solar
+    - URITemplate
 
 SPEC CHECKSUMS:
   EasyPeasy: aef0a77d7e7636d6b5e046194bc911b0a8d73c88
@@ -64,11 +87,12 @@ SPEC CHECKSUMS:
   RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
   RxCoreLocation: 720d166b2692ceae5703f1b47817ea974356fff2
   RxGoogleMaps: 8e8501ee42f2f4095c02e7794ecb0e8758358934
+  RxOptional: e5448d3e21024489e07c31f6a262f2b50c975367
   RxSwift: e49536837d9901277638493ea537394d4b55f570
   RxSwiftExt: 64b7140124629a6a084159735f3714f0fb1c61d6
   Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: ba85157f12ef48853853c83320c7ef336b4cedb1
+PODFILE CHECKSUM: 3b6899212559aaf79f67247b4bb8aaa8cfdb4a61
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0
