@@ -44,6 +44,8 @@ extension CurrentInfoController {
             return hud
         }()
         
+        fadeOut(view: hud, duration: 0)
+        
         let stackView: UIStackView = {
             let stackView = UIStackView()
             stackView.axis = .vertical
@@ -100,6 +102,7 @@ extension CurrentInfoController {
         let lowLabel: UILabel = {
             let lowLabel = UILabel()
             lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+            lowLabel.text = "Low"
             hud.addSubview(lowLabel)
             lowLabel.easy.layout(
                 Left(16).to(currentTemperatureLabel),
@@ -119,6 +122,7 @@ extension CurrentInfoController {
         let highLabel: UILabel = {
             let highLabel = UILabel()
             highLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+            highLabel.text = "High"
             hud.addSubview(highLabel)
             highLabel.easy.layout(
                 Left(16).to(minimumTemperatureLabel),
@@ -252,35 +256,25 @@ extension CurrentInfoController {
             .disposed(by: disposedBy)
         
         weather.map { $0.temperature }
-            .map { self.format(temperature: $0) }
+            .map { WeatherFormatter.format(temperature: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.currentTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
         weather.map { $0.minimumTemperature }
-            .map { self.format(temperature: $0) }
+            .map { WeatherFormatter.format(temperature: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.minimumTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
-        weather.map { _ in return "Low" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.lowLabel.rx.text)
-            .disposed(by: disposedBy)
-        
         weather.map { $0.maximumTemperature }
-            .map { self.format(temperature: $0) }
+            .map { WeatherFormatter.format(temperature: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.maximumTemperatureLabel.rx.text)
             .disposed(by: disposedBy)
         
-        weather.map { _ in return "High" }
-            .asDriver(onErrorJustReturn: "")
-            .drive(components.highLabel.rx.text)
-            .disposed(by: disposedBy)
-        
         weather.map { $0.humidity }
-            .map { self.format(humidity: $0) }
+            .map { WeatherFormatter.format(humidity: $0) }
             .asDriver(onErrorJustReturn: "")
             .drive(components.currentHumidityLabel.rx.text)
             .disposed(by: disposedBy)
@@ -339,26 +333,10 @@ extension CurrentInfoController {
         return Observable
             .combineLatest(forWeather, placemark) { (w, p) in
                 if let locality = p.locality {
-                    return "\(self.format(weatherDescription: w.description)) over \(locality)"
+                    return "\(WeatherFormatter.format(description: w.description)) over \(locality)"
                 }
-                return "\(self.format(weatherDescription: w.description))"
+                return "\(WeatherFormatter.format(description: w.description))"
             }
-    }
-    
-    func format(weatherDescription: String) -> String {
-        let description = weatherDescription.capitalized
-        if weatherDescription.lowercased() == "clear" {
-            return "\(description) Sky"
-        }
-        return description
-    }
-    
-    func format(temperature: Float) -> String {
-        return String(Int(temperature.rounded())) + "°"
-    }
-    
-    func format(humidity: Float) -> String {
-        return "\(String(Int((humidity * 100).rounded())))% rh"
     }
     
     func fadeIn(view: UIView, duration: TimeInterval) -> Void {
