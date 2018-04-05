@@ -12,7 +12,7 @@ func placemarkForLocation(reverseGeocode: @escaping ReverseGeocode)
     -> (Observable<CLLocation>)
     -> Observable<CLPlacemark> {
     return {
-        $0.flatMapLatest(CLGeocoder().rx.reverseGeocode)
+        $0.flatMapLatest(reverseGeocode)
             .map { $0.first }
             .filterNil()
     }
