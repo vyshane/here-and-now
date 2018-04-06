@@ -22,6 +22,8 @@ extension CurrentInfoController {
             let mapView = GMSMapView()
             mapView.isBuildingsEnabled = true
             mapView.isMyLocationEnabled = true
+            mapView.settings.rotateGestures = false
+            mapView.settings.tiltGestures = false
             mapView.setMinZoom(2.0, maxZoom: 18.0)
             addToRootView.addSubview(mapView)
             mapView.easy.layout(Edges())
@@ -229,9 +231,7 @@ extension CurrentInfoController {
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
         
-        Observable
-            .zip(weather, idleCameraPosition)
-            .map { _ in true }  // Everything OK
+        shouldShowHud(whenWeatherFetched: weather, mapCameraIdleAt: idleCameraPosition)
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { ok in
                 if (ok) {
@@ -304,6 +304,13 @@ extension CurrentInfoController {
             case _: return false
             }
         }
+    }
+    
+    func shouldShowHud(whenWeatherFetched: Observable<Weather>,
+                       mapCameraIdleAt: Observable<GMSCameraPosition>) -> Observable<Bool> {
+        return Observable
+            .zip(whenWeatherFetched, mapCameraIdleAt)
+            .map { _ in true }
     }
     
     func initialCameraPosition(forLocation: Observable<CLLocation?>) -> Single<GMSCameraPosition> {
