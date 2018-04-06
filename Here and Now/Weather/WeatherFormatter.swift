@@ -5,9 +5,10 @@ import Foundation
 class WeatherFormatter {
     
     static func format(description: String) -> String {
-        let description = description.capitalized
-        if description.lowercased() == "clear" {
-            return "\(description) Sky"
+        let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
+        let description = capitalizeFirst(description.lowercased())
+        if description == "Clear" {
+            return "\(description) sky"
         }
         return description
     }
