@@ -129,8 +129,7 @@
 				34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */,
 				34A0E80C2076B0830086FA51 /* Location.swift */,
 			);
-			name = Location;
-			path = "New Group";
+			path = Location;
 			sourceTree = "<group>";
 		};
 		349266FD2061C649003371C8 /* Current Info */ = {
