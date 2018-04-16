@@ -8,7 +8,7 @@ import GoogleMaps
 struct CurrentInfoComponents {
     let locationManager: CLLocationManager
     let weatherService: WeatherService
-    let mapView: GMSMapView
+    let map: Map
     let hud: UIView
     let timeLabel: UILabel
     let dateLabel: UILabel

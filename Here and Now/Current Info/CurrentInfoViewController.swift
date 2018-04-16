@@ -3,7 +3,7 @@
 import RxSwift
 
 class CurrentInfoViewController: UIViewController, CurrentInfoController {
-    private lazy var components: CurrentInfoComponents = initComponents(addToRootView: view)
+    private lazy var components: CurrentInfoComponents = initComponents(addToRootView: view, disposedBy: disposeBag)
     private var disposeBag = DisposeBag()
     
     override var prefersStatusBarHidden: Bool {

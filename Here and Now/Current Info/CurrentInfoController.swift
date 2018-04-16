@@ -16,19 +16,11 @@ extension CurrentInfoController {
     
     // MARK: Lifecycle Methods
     
-    func initComponents(addToRootView: UIView) -> CurrentInfoComponents {
-        let mapView: GMSMapView = {
-            GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
-            let mapView = GMSMapView()
-            mapView.isBuildingsEnabled = true
-            mapView.isMyLocationEnabled = true
-            mapView.settings.rotateGestures = false
-            mapView.settings.tiltGestures = false
-            mapView.setMinZoom(2.0, maxZoom: 18.0)
-            addToRootView.addSubview(mapView)
-            mapView.easy.layout(Edges())
-            return mapView
-        }()
+    func initComponents(addToRootView: UIView, disposedBy: DisposeBag) -> CurrentInfoComponents {
+        
+        let map = Map(disposedBy: disposedBy)
+        addToRootView.addSubview(map.view)
+        map.view.easy.layout(Edges())
 
         let maskView: UIView = {
             let maskView = UIView()
@@ -172,7 +164,7 @@ extension CurrentInfoController {
         return CurrentInfoComponents(
             locationManager: CLLocationManager(),
             weatherService: WeatherService(apiKey: Config().darkSkyApiKey),
-            mapView: mapView,
+            map: map,
             hud: hud,
             timeLabel: timeLabel,
             dateLabel: dateLabel,
@@ -192,27 +184,25 @@ extension CurrentInfoController {
         components.locationManager.distanceFilter = 10
         components.locationManager.startUpdatingLocation()
         
-        shouldHideMap(forAuthorizationEvent: components.locationManager.rx.didChangeAuthorization.asObservable())
-            .asDriver(onErrorJustReturn: true)
-            .drive(components.mapView.rx.isHidden)
-            .disposed(by: disposedBy)
+        let mapSources = components.map.start(
+            Map.Sinks(
+                authorization: components.locationManager.rx.didChangeAuthorization.asObservable(),
+                location: components.locationManager.rx.location.take(1),
+                date: currentDate()
+            )
+        )
         
-        components.mapView.rx.didFinishTileRendering
+        mapSources.didFinishTileRendering
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: { _ in self.fadeOut(view: components.maskView, duration: 0.5) })
             .disposed(by: disposedBy)
         
-        components.mapView.rx.willMove
+        mapSources.willMove
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { _ in self.fadeOut(view: components.hud, duration: 0.5) })
             .disposed(by: disposedBy)
         
-        initialCameraPosition(forLocation: components.locationManager.rx.location)
-            .asDriver(onErrorJustReturn: GMSCameraPosition())
-            .drive(components.mapView.rx.cameraToAnimate)
-            .disposed(by: disposedBy)
-        
-        let idleCameraPosition = components.mapView.rx.idleAt.share()
+        let idleCameraPosition = mapSources.idleAt.share()
         let idleCameraLocation = idleCameraPosition.map(toLocation).share()
         let placemark = placemarkForLocation(reverseGeocode: CLGeocoder().rx.reverseGeocode)(idleCameraLocation).share()
         
@@ -291,34 +281,16 @@ extension CurrentInfoController {
         forComponents.maximumTemperatureLabel.textColor = style.textColor
         forComponents.lowLabel.textColor = style.textColor
         forComponents.highLabel.textColor = style.textColor
-        forComponents.mapView.mapStyle = style.mapStyle
         forComponents.maskView.backgroundColor = style.defaultBackgroundColor
     }
     
     // MARK: UI State Changes
 
-    func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Observable<Bool> {
-        return forAuthorizationEvent.map {
-            switch ($0.status) {
-            case .denied: return true
-            case _: return false
-            }
-        }
-    }
-    
     func shouldShowHud(whenWeatherFetched: Observable<Weather>,
                        mapCameraIdleAt: Observable<GMSCameraPosition>) -> Observable<Bool> {
         return Observable
             .zip(whenWeatherFetched, mapCameraIdleAt)
             .map { _ in true }
-    }
-    
-    func initialCameraPosition(forLocation: Observable<CLLocation?>) -> Single<GMSCameraPosition> {
-        return forLocation
-            .filterNil()
-            .take(1)
-            .map(toCameraPosition)
-            .asSingle()
     }
     
     typealias FetchWeather = (CLLocationCoordinate2D, Bool) -> Single<Weather>

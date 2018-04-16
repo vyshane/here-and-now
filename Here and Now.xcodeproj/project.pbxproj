@@ -15,6 +15,8 @@
 		349266FF2061C7EE003371C8 /* CurrentInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349266FE2061C7EE003371C8 /* CurrentInfoController.swift */; };
 		34A0E80D2076B0830086FA51 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A0E80C2076B0830086FA51 /* Location.swift */; };
 		34A0E80F2076CE7E0086FA51 /* WeatherFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A0E80E2076CE7E0086FA51 /* WeatherFormatter.swift */; };
+		34A68A142084A1A4002ACDFA /* TimeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A68A132084A1A4002ACDFA /* TimeDisplay.swift */; };
+		34A68A162084A53B002ACDFA /* Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A68A152084A53B002ACDFA /* Map.swift */; };
 		34DFAEFD204F59E7007E6B45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAEFC204F59E7007E6B45 /* AppDelegate.swift */; };
 		34DFAEFF204F59E7007E6B45 /* CurrentInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DFAEFE204F59E7007E6B45 /* CurrentInfoViewController.swift */; };
 		34DFAF02204F59E7007E6B45 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34DFAF00204F59E7007E6B45 /* Main.storyboard */; };
@@ -56,6 +58,8 @@
 		349266FE2061C7EE003371C8 /* CurrentInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoController.swift; sourceTree = "<group>"; };
 		34A0E80C2076B0830086FA51 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		34A0E80E2076CE7E0086FA51 /* WeatherFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherFormatter.swift; sourceTree = "<group>"; };
+		34A68A132084A1A4002ACDFA /* TimeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeDisplay.swift; sourceTree = "<group>"; };
+		34A68A152084A53B002ACDFA /* Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Map.swift; sourceTree = "<group>"; };
 		34DFAEF9204F59E7007E6B45 /* Here and Now.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Here and Now.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DFAEFC204F59E7007E6B45 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34DFAEFE204F59E7007E6B45 /* CurrentInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoViewController.swift; sourceTree = "<group>"; };
@@ -132,11 +136,21 @@
 		349266FD2061C649003371C8 /* Current Info */ = {
 			isa = PBXGroup;
 			children = (
+				34A68A122084A09D002ACDFA /* Components */,
 				34DFAEFE204F59E7007E6B45 /* CurrentInfoViewController.swift */,
 				349266FE2061C7EE003371C8 /* CurrentInfoController.swift */,
 				348858D92080317400839DA1 /* CurrentInfoComponents.swift */,
 			);
 			path = "Current Info";
+			sourceTree = "<group>";
+		};
+		34A68A122084A09D002ACDFA /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				34A68A132084A1A4002ACDFA /* TimeDisplay.swift */,
+				34A68A152084A53B002ACDFA /* Map.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		34DFAEF0204F59E7007E6B45 = {
@@ -541,11 +555,13 @@
 				34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */,
 				34A0E80D2076B0830086FA51 /* Location.swift in Sources */,
 				349266FF2061C7EE003371C8 /* CurrentInfoController.swift in Sources */,
+				34A68A142084A1A4002ACDFA /* TimeDisplay.swift in Sources */,
 				34A0E80F2076CE7E0086FA51 /* WeatherFormatter.swift in Sources */,
 				34DFAEFF204F59E7007E6B45 /* CurrentInfoViewController.swift in Sources */,
 				34DFAEFD204F59E7007E6B45 /* AppDelegate.swift in Sources */,
 				34E239E520596C2500888362 /* UIScheme.swift in Sources */,
 				34DFAF2D204F5D8D007E6B45 /* Config.swift in Sources */,
+				34A68A162084A53B002ACDFA /* Map.swift in Sources */,
 				3429615F20503809005803AE /* Time.swift in Sources */,
 				34DFAF31204F5E49007E6B45 /* Weather.swift in Sources */,
 				348858DA2080317400839DA1 /* CurrentInfoComponents.swift in Sources */,
