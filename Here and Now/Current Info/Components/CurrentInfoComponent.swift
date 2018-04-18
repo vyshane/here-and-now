@@ -47,7 +47,7 @@ class CurrentInfoComponent {
         let mapSources = map.start(
             MapComponent.Inputs(
                 authorization: inputs.authorization,
-                location: inputs.initialLocation,
+                initialLocation: inputs.initialLocation,
                 date: inputs.date
             )
         )

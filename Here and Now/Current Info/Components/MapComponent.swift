@@ -10,7 +10,7 @@ class MapComponent {
     
     struct Inputs {
         let authorization: Observable<CLAuthorizationEvent>
-        let location: Observable<CLLocation?>
+        let initialLocation: Observable<CLLocation?>
         let date: Observable<Date>
     }
     
@@ -42,7 +42,7 @@ class MapComponent {
             .drive(view.rx.isHidden)
             .disposed(by: disposedBy)
         
-        cameraPosition(forLocation: inputs.location)
+        cameraPosition(forLocation: inputs.initialLocation)
             .drive(view.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
