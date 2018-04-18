@@ -37,7 +37,7 @@ class CurrentInfoViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         locationManager.stopUpdatingLocation()
         disposeBag = DisposeBag()
-        super.viewDidDisappear(animated)
+        super.viewWillDisappear(animated)
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
