@@ -1,6 +1,7 @@
 //  Copyright © 2018 Vy-Shane Xie. All rights reserved.
 
 import CoreLocation
+import GoogleMaps
 import UIKit
 
 @UIApplicationMain
@@ -9,6 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        GMSServices.provideAPIKey(Config().googleMobileServicesAPIKey)
         return true
     }
 

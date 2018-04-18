@@ -21,7 +21,3 @@ func placemarkForLocation(reverseGeocode: @escaping ReverseGeocode)
 func toLocation(position: GMSCameraPosition) -> CLLocation {
     return CLLocation(latitude: position.target.latitude, longitude: position.target.longitude)
 }
-
-func toCameraPosition(location: CLLocation) -> GMSCameraPosition {
-    return GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 14, bearing: 0, viewingAngle: 45)
-}
