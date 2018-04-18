@@ -32,6 +32,7 @@ class CurrentInfoComponent {
         view.addSubview(map.view)
         map.view.easy.layout(Edges())
         
+        // Hide map during transitions
         mask = UIView()
         mask.backgroundColor = UIColor.black
         view.addSubview(mask)
