@@ -9,11 +9,8 @@ import RxSwift
 protocol CurrentInfoController { }
 
 extension CurrentInfoController {
-    
-    // MARK: Lifecycle Methods
-    
+
     func initComponents(addToRootView: UIView, disposedBy: DisposeBag) -> CurrentInfoComponents {
-        
         let map = MapComponent(disposedBy: disposedBy)
         addToRootView.addSubview(map.view)
         map.view.easy.layout(Edges())
