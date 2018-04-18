@@ -63,6 +63,7 @@ extension CurrentInfoController {
             .drive(onNext: { _ in self.fadeOut(view: components.hud.view, duration: 0.5) })
             .disposed(by: disposedBy)
         
+        let date = currentDate().share()
         let idleCameraPosition = mapSources.idleAt.share()
         let idleCameraLocation = idleCameraPosition.map(toLocation).share()
         let placemark = placemarkForLocation(reverseGeocode: CLGeocoder().rx.reverseGeocode)(idleCameraLocation).share()
@@ -71,9 +72,7 @@ extension CurrentInfoController {
                 idleCameraPosition.map(toLocation), currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
-        
-        let date = currentDate().share()
-        
+
         components.hud.start(
             HeadUpDisplayComponent.Inputs(
                 uiScheme: uiScheme(fromLocation: idleCameraLocation,
@@ -99,15 +98,6 @@ extension CurrentInfoController {
         components.locationManager.stopUpdatingLocation()
     }
     
-    // MARK: UI State Changes
-
-    func shouldShowHud(whenWeatherFetched: Observable<Weather>,
-                       mapCameraIdleAt: Observable<GMSCameraPosition>) -> Observable<Bool> {
-        return Observable
-            .zip(whenWeatherFetched, mapCameraIdleAt)
-            .map { _ in true }
-    }
-    
     typealias FetchWeather = (CLLocationCoordinate2D, Bool) -> Single<Weather>
     
     func checkWeather(fetch: @escaping FetchWeather)
@@ -126,6 +116,13 @@ extension CurrentInfoController {
         }
     }
 
+    func shouldShowHud(whenWeatherFetched: Observable<Weather>,
+                       mapCameraIdleAt: Observable<GMSCameraPosition>) -> Observable<Bool> {
+        return Observable
+            .zip(whenWeatherFetched, mapCameraIdleAt)
+            .map { _ in true }
+    }
+    
     func fadeIn(view: UIView, duration: TimeInterval) -> Void {
         if (view.alpha < 1.0) {
             UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: { view.alpha = 1.0 })
