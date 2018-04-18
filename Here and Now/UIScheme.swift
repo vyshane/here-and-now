@@ -2,6 +2,7 @@
 
 import Foundation
 import GoogleMaps
+import RxCocoa
 import RxSwift
 
 enum UIScheme {
@@ -35,13 +36,15 @@ struct UIStyle {
     let mapStyle: GMSMapStyle
 }
 
-func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Observable<UIScheme> {
-    return Observable.combineLatest(fromLocation, date) { (l, d) in
-        if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
-            return isDayTime ? .light : .dark
+func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {
+    return Observable
+        .combineLatest(fromLocation, date) { (l, d) in
+            if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
+                return isDayTime ? .light : .dark
+            }
+            return .light
         }
-        return .light
-    }
+        .asDriver(onErrorJustReturn: .light)
 }
 
 fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """

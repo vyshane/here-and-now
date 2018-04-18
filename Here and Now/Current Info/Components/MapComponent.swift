@@ -2,10 +2,24 @@
 
 import GoogleMaps
 import RxCocoa
+import RxGoogleMaps
 import RxCoreLocation
 import RxSwift
 
-class Map {
+class MapComponent {
+    
+    struct Inputs {
+        let authorization: Observable<CLAuthorizationEvent>
+        let location: Observable<CLLocation?>
+        let date: Observable<Date>
+    }
+    
+    struct Outputs {
+        let didFinishTileRendering: Observable<Void>
+        let willMove: ControlEvent<Bool>
+        let idleAt: ControlEvent<GMSCameraPosition>
+    }
+    
     let view: GMSMapView
     private let disposedBy: DisposeBag
 
@@ -19,32 +33,20 @@ class Map {
         view.setMinZoom(2.0, maxZoom: 18.0)
     }
     
-    struct Sinks {
-        let authorization: Observable<CLAuthorizationEvent>
-        let location: Observable<CLLocation?>
-        let date: Observable<Date>
-    }
-    
-    struct Sources {
-        let didFinishTileRendering: Observable<Void>
-        let willMove: ControlEvent<Bool>
-        let idleAt: ControlEvent<GMSCameraPosition>
-    }
-    
-    func start(_ sinks: Sinks) -> Sources {
-        mapStyle(forCameraPosition: view.rx.idleAt, date: sinks.date.throttle(60, scheduler: MainScheduler.instance))
+    func start(_ inputs: Inputs) -> Outputs {
+        mapStyle(forCameraPosition: view.rx.idleAt, date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
             .drive(onNext: { self.view.mapStyle = $0 })
             .disposed(by: disposedBy)
         
-        shouldHideMap(forAuthorizationEvent: sinks.authorization)
+        shouldHideMap(forAuthorizationEvent: inputs.authorization)
             .drive(view.rx.isHidden)
             .disposed(by: disposedBy)
         
-        cameraPosition(forLocation: sinks.location)
+        cameraPosition(forLocation: inputs.location)
             .drive(view.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
-        return Sources(
+        return Outputs(
             didFinishTileRendering: view.rx.didFinishTileRendering,
             willMove: view.rx.willMove,
             idleAt: view.rx.idleAt
@@ -52,13 +54,12 @@ class Map {
     }
 }
 
-extension Map {
+extension MapComponent {
     func mapStyle(forCameraPosition: ControlEvent<GMSCameraPosition>, date: Observable<Date>) -> Driver<GMSMapStyle> {
         let location = forCameraPosition
             .asObservable()
             .map(toLocation)
         return uiScheme(fromLocation: location, date: date)
-            .asDriver(onErrorJustReturn: .light)
             .map { $0.style().mapStyle }
     }
     
@@ -76,6 +77,6 @@ extension Map {
         return forLocation
             .filterNil()
             .map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 45) }
-            .asDriver(onErrorJustReturn: GMSCameraPosition())
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
     }
 }

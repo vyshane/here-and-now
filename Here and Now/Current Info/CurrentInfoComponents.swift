@@ -8,18 +8,9 @@ import GoogleMaps
 struct CurrentInfoComponents {
     let locationManager: CLLocationManager
     let weatherService: WeatherService
-    let map: Map
-    let hud: UIView
-    let timeLabel: UILabel
-    let dateLabel: UILabel
-    let summaryLabel: UILabel
-    let currentTemperatureLabel: UILabel
-    let minimumTemperatureLabel: UILabel
-    let maximumTemperatureLabel: UILabel
-    let lowLabel: UILabel
-    let highLabel: UILabel
-    let currentHumidityLabel: UILabel
-    
+    let map: MapComponent
+    let hud: HeadUpDisplayComponent
+
     // Temporarily hides map to prevent background flash while map tiles are loading
     let maskView: UIView
 }
