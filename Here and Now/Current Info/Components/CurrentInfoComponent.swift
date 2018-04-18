@@ -83,7 +83,7 @@ class CurrentInfoComponent {
         )
         
         uiScheme
-            .drive(onNext: { self.mask.backgroundColor = $0.style().hudBackgroundColor })
+            .drive(onNext: { self.mask.backgroundColor = $0.style().defaultBackgroundColor })
             .disposed(by: disposedBy)
 
         inputs.viewTransition
