@@ -11,8 +11,8 @@ class CurrentInfoViewController: UIViewController, CurrentInfoController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         start(components: components, disposedBy: disposeBag)
+        super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {

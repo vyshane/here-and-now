@@ -66,7 +66,7 @@ extension CurrentInfoController {
         let placemark = placemarkForLocation(reverseGeocode: CLGeocoder().rx.reverseGeocode)(idleCameraLocation).share()
         
         let weather = checkWeather(fetch: components.weatherService.fetchCurrentWeather)(
-                idleCameraPosition.map(toLocation), currentDate(), Locale.current.usesMetricSystem)
+                idleCameraLocation, currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
             .share()
 
@@ -83,7 +83,7 @@ extension CurrentInfoController {
         shouldShowHud(whenWeatherFetched: weather, mapCameraIdleAt: idleCameraPosition)
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { ok in
-                if (ok) {
+                if ok {
                     self.fadeIn(view: components.hud.view, duration: 0.5)
                 }
             })
