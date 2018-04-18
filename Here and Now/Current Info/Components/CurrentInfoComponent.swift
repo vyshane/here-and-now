@@ -64,7 +64,9 @@ class CurrentInfoComponent {
         
         let idleCameraPosition = mapSources.idleAt.share()
         let idleCameraLocation = idleCameraPosition.map(toLocation).share()
-        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation).share()
+        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation)
+        let uiScheme = uiSchemeDriver(fromLocation: idleCameraLocation,
+                                      date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
         
         let weather = checkWeather(fetch: self.weatherService.fetchCurrentWeather)(
             idleCameraLocation, currentDate(), Locale.current.usesMetricSystem)
@@ -73,14 +75,17 @@ class CurrentInfoComponent {
         
         hud.start(
             HeadUpDisplayComponent.Inputs(
-                uiScheme: uiScheme(fromLocation: idleCameraLocation,
-                                   date: inputs.date.throttle(60, scheduler: MainScheduler.instance)),
+                uiScheme: uiScheme,
                 date: inputs.date,
                 placemark: placemark,
                 weather: weather
             )
         )
         
+        uiScheme
+            .drive(onNext: { self.mask.backgroundColor = $0.style().hudBackgroundColor })
+            .disposed(by: disposedBy)
+
         inputs.viewTransition
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: { _ in

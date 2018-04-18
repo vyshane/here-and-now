@@ -59,7 +59,7 @@ extension MapComponent {
         let location = forCameraPosition
             .asObservable()
             .map(toLocation)
-        return uiScheme(fromLocation: location, date: date)
+        return uiSchemeDriver(fromLocation: location, date: date)
             .map { $0.style().mapStyle }
     }
     

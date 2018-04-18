@@ -36,7 +36,7 @@ struct UIStyle {
     let mapStyle: GMSMapStyle
 }
 
-func uiScheme(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {
+func uiSchemeDriver(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {
     return Observable
         .combineLatest(fromLocation, date) { (l, d) in
             if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {

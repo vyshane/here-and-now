@@ -7,6 +7,8 @@ import RxCocoa
 import RxSwift
 import RxSwiftExt
 
+// The head up display is a transparent overlay that displays the current location, weather
+// and date information
 class HeadUpDisplayComponent {
     
     struct Inputs {
