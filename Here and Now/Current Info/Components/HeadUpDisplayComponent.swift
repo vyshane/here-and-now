@@ -9,7 +9,7 @@ import RxSwiftExt
 
 // The head up display is a transparent overlay that displays the current location, weather
 // and date information
-class HeadUpDisplayComponent {
+class HeadUpDisplayComponent: ViewComponent {
     
     struct Inputs {
         let uiScheme: Driver<UIScheme>
@@ -18,20 +18,19 @@ class HeadUpDisplayComponent {
         let weather: Observable<Weather>
     }
     
-    let view: UIView
+    let view = UIView()
     private let disposedBy: DisposeBag
     private let clock: ClockComponent
-    private let summaryLabel: FittableFontLabel
-    private let currentTemperatureLabel: UILabel
-    private let lowLabel: UILabel
-    private let minimumTemperatureLabel: UILabel
-    private let highLabel: UILabel
-    private let maximumTemperatureLabel: UILabel
-    private let currentHumidityLabel: UILabel
+    private let summaryLabel = FittableFontLabel()
+    private let currentTemperatureLabel = UILabel()
+    private let lowLabel = UILabel()
+    private let minimumTemperatureLabel = UILabel()
+    private let highLabel = UILabel()
+    private let maximumTemperatureLabel = UILabel()
+    private let currentHumidityLabel = UILabel()
 
-    init(disposedBy: DisposeBag) {
+    required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
-        view = UIView()
         view.isUserInteractionEnabled = false
         
         clock = ClockComponent(disposedBy: disposedBy)
@@ -49,7 +48,6 @@ class HeadUpDisplayComponent {
             Right(16)
         )
         
-        summaryLabel = FittableFontLabel()
         summaryLabel.textAlignment = .left
         stackView.addArrangedSubview(summaryLabel)
         // Fill width
@@ -67,18 +65,15 @@ class HeadUpDisplayComponent {
         temperatureStackView.spacing = 16
         stackView.addArrangedSubview(temperatureStackView)
 
-        currentTemperatureLabel = UILabel()
         currentTemperatureLabel.textAlignment = .left
         temperatureStackView.addArrangedSubview(currentTemperatureLabel)
         currentTemperatureLabel.font = UIFont.systemFont(ofSize: 130, weight: .thin)
         currentTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
-        minimumTemperatureLabel = UILabel()
         minimumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
         minimumTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         temperatureStackView.addArrangedSubview(minimumTemperatureLabel)
 
-        lowLabel = UILabel()
         lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         lowLabel.text = "Low"
         view.addSubview(lowLabel)
@@ -87,12 +82,10 @@ class HeadUpDisplayComponent {
             Top().to(minimumTemperatureLabel)
         )
 
-        maximumTemperatureLabel = UILabel()
         maximumTemperatureLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         temperatureStackView.addArrangedSubview(maximumTemperatureLabel)
         maximumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
 
-        highLabel = UILabel()
         highLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         highLabel.text = "High"
         view.addSubview(highLabel)
@@ -101,7 +94,6 @@ class HeadUpDisplayComponent {
             Top().to(maximumTemperatureLabel)
         )
 
-        currentHumidityLabel = UILabel()
         currentHumidityLabel.textAlignment = .left
         stackView.addArrangedSubview(currentHumidityLabel)
         currentHumidityLabel.font = UIFont.systemFont(ofSize: 64, weight: .light)

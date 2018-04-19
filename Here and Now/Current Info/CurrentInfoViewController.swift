@@ -25,8 +25,8 @@ class CurrentInfoViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         currentInfo.start(
             CurrentInfoComponent.Inputs(
-                authorization: locationManager.rx.didChangeAuthorization.asObservable(),
-                initialLocation: locationManager.rx.location.take(1),
+                authorization: locationManager.rx.didChangeAuthorization.asObservable().share(),
+                initialLocation: locationManager.rx.location.take(1).share(),
                 date: currentDate().share(),
                 viewTransition: viewTransition
             )

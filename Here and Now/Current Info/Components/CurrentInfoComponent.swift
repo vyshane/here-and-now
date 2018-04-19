@@ -7,7 +7,7 @@ import RxCocoa
 import RxCoreLocation
 import RxSwift
 
-class CurrentInfoComponent {
+class CurrentInfoComponent: ViewComponent {
     
     struct Inputs {
         let authorization: Observable<CLAuthorizationEvent>
@@ -16,24 +16,22 @@ class CurrentInfoComponent {
         let viewTransition: BehaviorSubject<Void>
     }
     
-    let view: UIView
+    let view = UIView()
     private let disposedBy: DisposeBag
     private let weatherService = WeatherService(apiKey: Config().darkSkyApiKey)
     private let geocoder = CLGeocoder()
     private let map: MapComponent
-    private let mask: UIView
+    private let mask = UIView()
     private let hud: HeadUpDisplayComponent
 
-    init(disposedBy: DisposeBag) {
+    required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
-        view = UIView()
-        
+
         map = MapComponent(disposedBy: disposedBy)
         view.addSubview(map.view)
         map.view.easy.layout(Edges())
         
         // Hide map during transitions
-        mask = UIView()
         mask.backgroundColor = UIColor.black
         view.addSubview(mask)
         mask.easy.layout(Edges())
@@ -65,7 +63,7 @@ class CurrentInfoComponent {
         
         let idleCameraPosition = mapSources.idleAt.share()
         let idleCameraLocation = idleCameraPosition.map(toLocation).share()
-        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation)
+        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation).share()
         let uiScheme = uiSchemeDriver(fromLocation: idleCameraLocation,
                                       date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
         

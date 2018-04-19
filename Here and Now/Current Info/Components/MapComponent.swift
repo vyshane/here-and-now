@@ -1,12 +1,13 @@
 //  Copyright © 2018 Vy-Shane Xie. All rights reserved.
 
+import EasyPeasy
 import GoogleMaps
 import RxCocoa
 import RxGoogleMaps
 import RxCoreLocation
 import RxSwift
 
-class MapComponent {
+class MapComponent: ViewComponent {
     
     struct Inputs {
         let authorization: Observable<CLAuthorizationEvent>
@@ -20,22 +21,24 @@ class MapComponent {
         let idleAt: ControlEvent<GMSCameraPosition>
     }
     
-    let view: GMSMapView
+    let view = UIView()
+    let mapView = GMSMapView()
     private let disposedBy: DisposeBag
 
-    init(disposedBy: DisposeBag) {
+    required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
-        view = GMSMapView()
-        view.isBuildingsEnabled = true
-        view.isMyLocationEnabled = true
-        view.settings.rotateGestures = false
-        view.settings.tiltGestures = false
-        view.setMinZoom(2.0, maxZoom: 18.0)
+        mapView.isBuildingsEnabled = true
+        mapView.isMyLocationEnabled = true
+        mapView.settings.rotateGestures = false
+        mapView.settings.tiltGestures = false
+        mapView.setMinZoom(2.0, maxZoom: 18.0)
+        view.addSubview(mapView)
+        mapView.easy.layout(Edges())
     }
     
     func start(_ inputs: Inputs) -> Outputs {
-        mapStyle(forCameraPosition: view.rx.idleAt, date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
-            .drive(onNext: { self.view.mapStyle = $0 })
+        mapStyle(forCameraPosition: mapView.rx.idleAt, date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
+            .drive(onNext: { self.mapView.mapStyle = $0 })
             .disposed(by: disposedBy)
         
         shouldHideMap(forAuthorizationEvent: inputs.authorization)
@@ -43,13 +46,13 @@ class MapComponent {
             .disposed(by: disposedBy)
         
         cameraPosition(forLocation: inputs.initialLocation)
-            .drive(view.rx.cameraToAnimate)
+            .drive(mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
         
         return Outputs(
-            didFinishTileRendering: view.rx.didFinishTileRendering,
-            willMove: view.rx.willMove,
-            idleAt: view.rx.idleAt
+            didFinishTileRendering: mapView.rx.didFinishTileRendering,
+            willMove: mapView.rx.willMove,
+            idleAt: mapView.rx.idleAt
         )
     }
 }

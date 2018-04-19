@@ -5,7 +5,7 @@ import FittableFontLabel
 import RxCocoa
 import RxSwift
 
-class ClockComponent {
+class ClockComponent: ViewComponent {
     
     struct Inputs {
         let uiScheme: Driver<UIScheme>
@@ -13,28 +13,25 @@ class ClockComponent {
         let timeZone: Observable<TimeZone>
     }
     
-    let view: UIView
+    let view = UIView()
     private let disposedBy: DisposeBag
-    private let dateLabel: UILabel
-    private let timeLabel: FittableFontLabel
+    private let dateLabel = UILabel()
+    private let timeLabel = FittableFontLabel()
 
-    init(disposedBy: DisposeBag) {
+    required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
-        view = UIView()
-        
-        dateLabel = UILabel()
+
         dateLabel.textAlignment = .center
         view.addSubview(dateLabel)
         dateLabel.easy.layout(
-            Right(8), Bottom(8)
+            Bottom(0), Right(0)
         )
         dateLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
 
-        timeLabel = FittableFontLabel()
         timeLabel.textAlignment = .center
         view.addSubview(timeLabel)
         timeLabel.easy.layout(
-            Width().like(dateLabel), Right(8), Bottom(4).to(dateLabel)
+            Width().like(dateLabel), Right(0), Bottom(4).to(dateLabel)
         )
         // Fill width
         timeLabel.font = UIFont.systemFont(ofSize: 180, weight: .regular)
