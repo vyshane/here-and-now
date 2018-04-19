@@ -5,6 +5,7 @@ import Foundation
 struct Weather {
     var description: String
     var temperature: Float
+    var apparentTemperature: Float
     var minimumTemperature: Float
     var maximumTemperature: Float
     var humidity: Float
@@ -17,6 +18,7 @@ struct Weather {
         let today = fromJSON.daily.data[0]
         description = currently.summary
         temperature = currently.temperature
+        apparentTemperature = currently.apparentTemperature
         minimumTemperature = today.temperatureLow
         maximumTemperature = today.temperatureHigh
         humidity = currently.humidity
@@ -36,6 +38,7 @@ struct ForecastJSON: Decodable {
 struct CurrentlyJSON: Decodable {
     let summary: String
     let temperature: Float
+    let apparentTemperature: Float
     let humidity: Float
     let pressure: Float
 }

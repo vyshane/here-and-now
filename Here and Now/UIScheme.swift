@@ -16,6 +16,15 @@ enum UIScheme {
                 textColor: UIColor(white: 0.1, alpha: 1.0),
                 hudBackgroundColor: UIColor.white.withAlphaComponent(0.2),
                 defaultBackgroundColor: .white,
+                temperatureColor: TemperatureColor(
+                    cold: UIColor(red:0.00, green:0.62, blue:0.76, alpha:1.0),
+                    cool: UIColor(red:0.28, green:0.62, blue:1.00, alpha:1.0),
+                    warm: UIColor(red:0.04, green:0.48, blue:1.00, alpha:1.0),
+                    warmer: UIColor(red:0.00, green:0.44, blue:0.87, alpha:1.0),
+                    warmerToHot: UIColor(red:0.44, green:0.30, blue:0.94, alpha:1.0),
+                    hot: UIColor(red:0.93, green:0.35, blue:0.55, alpha:1.0),
+                    veryHot: UIColor(red:0.77, green:0.17, blue:0.00, alpha:1.0)
+                ),
                 mapStyle: lightMapStyle
             )
         case .dark:
@@ -23,6 +32,15 @@ enum UIScheme {
                 textColor: UIColor(white: 0.8, alpha: 1.0),
                 hudBackgroundColor: UIColor.black.withAlphaComponent(0.2),
                 defaultBackgroundColor: .black,
+                temperatureColor: TemperatureColor(
+                    cold: UIColor(red:0.64, green:0.91, blue:1.00, alpha:1.0),
+                    cool: UIColor(red:0.00, green:0.70, blue:0.88, alpha:1.0),
+                    warm: UIColor(red:0.28, green:0.62, blue:1.00, alpha:1.0),
+                    warmer: UIColor(red:0.04, green:0.48, blue:1.00, alpha:1.0),
+                    warmerToHot: UIColor(red:0.60, green:0.43, blue:1.00, alpha:1.0),
+                    hot: UIColor(red:0.95, green:0.53, blue:0.68, alpha:1.0),
+                    veryHot: UIColor(red:1.00, green:0.35, blue:0.09, alpha:1.0)
+                ),
                 mapStyle: darkMapStyle
             )
         }
@@ -33,7 +51,18 @@ struct UIStyle {
     let textColor: UIColor
     let hudBackgroundColor: UIColor
     let defaultBackgroundColor: UIColor
+    let temperatureColor: TemperatureColor
     let mapStyle: GMSMapStyle
+}
+
+struct TemperatureColor {
+    let cold: UIColor
+    let cool: UIColor
+    let warm: UIColor
+    let warmer: UIColor
+    let warmerToHot: UIColor
+    let hot: UIColor
+    let veryHot: UIColor
 }
 
 func uiSchemeDriver(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {

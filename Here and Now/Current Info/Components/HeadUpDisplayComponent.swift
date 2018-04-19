@@ -96,7 +96,7 @@ class HeadUpDisplayComponent: ViewComponent {
 
         currentHumidityLabel.textAlignment = .left
         stackView.addArrangedSubview(currentHumidityLabel)
-        currentHumidityLabel.font = UIFont.systemFont(ofSize: 64, weight: .light)
+        currentHumidityLabel.font = UIFont.systemFont(ofSize: 48, weight: .light)
     }
     
     func start(_ inputs: Inputs) {
@@ -114,7 +114,6 @@ class HeadUpDisplayComponent: ViewComponent {
             .map { $0.style().textColor }
             .drive(onNext: {
                 self.summaryLabel.textColor = $0
-                self.currentTemperatureLabel.textColor = $0
                 self.lowLabel.textColor = $0
                 self.minimumTemperatureLabel.textColor = $0
                 self.highLabel.textColor = $0
@@ -127,6 +126,12 @@ class HeadUpDisplayComponent: ViewComponent {
             .drive(summaryLabel.rx.text)
             .disposed(by: disposedBy)
         
+        temperatureColor(forWeather: inputs.weather, uiScheme: inputs.uiScheme)
+            .drive(onNext: {
+                self.currentTemperatureLabel.textColor = $0
+            })
+            .disposed(by: disposedBy)
+
         inputs.weather.map { $0.temperature }
             .map { WeatherFormatter.format(temperature: $0) }
             .asDriver(onErrorJustReturn: "")
@@ -163,5 +168,31 @@ extension HeadUpDisplayComponent {
                 return "\(WeatherFormatter.format(description: w.description))"
             }
             .asDriver(onErrorJustReturn: "")
+    }
+    
+    func temperatureColor(forWeather: Observable<Weather>, uiScheme: Driver<UIScheme>) -> Driver<UIColor> {
+        return Observable
+            .combineLatest(forWeather, uiScheme.asObservable()) { (w, s) in
+                if w.apparentTemperature < 10 {
+                    return s.style().temperatureColor.cold
+                }
+                if w.apparentTemperature >= 10 && w.apparentTemperature < 15 {
+                    return s.style().temperatureColor.cool
+                }
+                if w.apparentTemperature >= 15 && w.apparentTemperature < 20 {
+                    return s.style().temperatureColor.warm
+                }
+                if w.apparentTemperature >= 20 && w.apparentTemperature < 25 {
+                    return s.style().temperatureColor.warmer
+                }
+                if w.apparentTemperature >= 25 && w.apparentTemperature < 30 {
+                    return s.style().temperatureColor.warmerToHot
+                }
+                if w.apparentTemperature >= 30 && w.apparentTemperature < 37 {
+                    return s.style().temperatureColor.hot
+                }
+                return s.style().temperatureColor.veryHot
+        }
+        .asDriver(onErrorJustReturn: .clear)
     }
 }

@@ -62,7 +62,7 @@ class WeatherServiceSpec: QuickSpec {
                                 "precipIntensity": 0,
                                 "precipProbability": 0,
                                 "temperature": 9.25,
-                                "apparentTemperature": 9.25,
+                                "apparentTemperature": 9.26,
                                 "dewPoint": 6.08,
                                 "humidity": 0.81,
                                 "pressure": 1021.69,
@@ -134,6 +134,7 @@ class WeatherServiceSpec: QuickSpec {
                         expect(weather).toNot(beNil())
                         expect(weather?.description) == "Clear"
                         expect(weather?.temperature) == 9.25
+                        expect(weather?.apparentTemperature) == 9.26
                         expect(weather?.minimumTemperature) == 8.91
                         expect(weather?.maximumTemperature) == 21.13
                         expect(weather?.humidity) == 0.81
