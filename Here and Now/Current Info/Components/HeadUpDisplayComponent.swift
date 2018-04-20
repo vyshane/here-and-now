@@ -96,7 +96,7 @@ class HeadUpDisplayComponent: ViewComponent {
 
         currentHumidityLabel.textAlignment = .left
         stackView.addArrangedSubview(currentHumidityLabel)
-        currentHumidityLabel.font = UIFont.systemFont(ofSize: 48, weight: .light)
+        currentHumidityLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
     }
     
     func start(_ inputs: Inputs) {
@@ -111,14 +111,21 @@ class HeadUpDisplayComponent: ViewComponent {
         )
         
         inputs.uiScheme
-            .map { $0.style().textColor }
+            .map { $0.style() }
             .drive(onNext: {
-                self.summaryLabel.textColor = $0
-                self.lowLabel.textColor = $0
-                self.minimumTemperatureLabel.textColor = $0
-                self.highLabel.textColor = $0
-                self.maximumTemperatureLabel.textColor = $0
-                self.currentHumidityLabel.textColor = $0
+                self.view.backgroundColor = $0.hudBackgroundColor
+                self.summaryLabel.textColor = $0.textColor
+                self.summaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.lowLabel.textColor = $0.textColor
+                self.lowLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.minimumTemperatureLabel.textColor = $0.textColor
+                self.minimumTemperatureLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.highLabel.textColor = $0.textColor
+                self.highLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.maximumTemperatureLabel.textColor = $0.textColor
+                self.maximumTemperatureLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.currentHumidityLabel.textColor = $0.textColor
+                self.currentHumidityLabel.outlineShadow(color: $0.defaultBackgroundColor)
             })
             .disposed(by: disposedBy)
         
@@ -129,6 +136,7 @@ class HeadUpDisplayComponent: ViewComponent {
         temperatureColor(forWeather: inputs.weather, uiScheme: inputs.uiScheme)
             .drive(onNext: {
                 self.currentTemperatureLabel.textColor = $0
+                self.currentHumidityLabel.textColor = $0
             })
             .disposed(by: disposedBy)
 

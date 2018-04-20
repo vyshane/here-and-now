@@ -11,6 +11,7 @@
 		251C8E365ACD5CD9E105F5BC /* Pods_Here_and_Now_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFD5186D097608816F67E3E /* Pods_Here_and_Now_Tests.framework */; };
 		3429615F20503809005803AE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3429615E20503809005803AE /* Time.swift */; };
 		34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */; };
+		3457925E20899C9100A8F019 /* UILabel+Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3457925D20899C9100A8F019 /* UILabel+Styles.swift */; };
 		3481F5322088633E00670543 /* ViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3481F5312088633E00670543 /* ViewComponent.swift */; };
 		3483308C2087818900CC7A08 /* CurrentInfoComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3483308B2087818900CC7A08 /* CurrentInfoComponent.swift */; };
 		3483308E208803CF00CC7A08 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3483308D208803CF00CC7A08 /* README.md */; };
@@ -56,6 +57,7 @@
 		201E5EA40056060A5423EF36 /* Pods_Here_and_Now.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Here_and_Now.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3429615E20503809005803AE /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLGeocoder+Rx.swift"; sourceTree = "<group>"; };
+		3457925D20899C9100A8F019 /* UILabel+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Styles.swift"; sourceTree = "<group>"; };
 		3481F5312088633E00670543 /* ViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponent.swift; sourceTree = "<group>"; };
 		3483308B2087818900CC7A08 /* CurrentInfoComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoComponent.swift; sourceTree = "<group>"; };
 		3483308D208803CF00CC7A08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -136,6 +138,15 @@
 			path = Location;
 			sourceTree = "<group>";
 		};
+		3457925C20899C0200A8F019 /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				34E239E420596C2500888362 /* UIScheme.swift */,
+				3457925D20899C9100A8F019 /* UILabel+Styles.swift */,
+			);
+			path = Style;
+			sourceTree = "<group>";
+		};
 		3481F5302088631C00670543 /* Library */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,13 +201,13 @@
 		34DFAEFB204F59E7007E6B45 /* Here and Now */ = {
 			isa = PBXGroup;
 			children = (
+				3457925C20899C0200A8F019 /* Style */,
 				3481F5302088631C00670543 /* Library */,
 				34534AA7207512D0001149F0 /* Location */,
 				349266FD2061C649003371C8 /* Current Info */,
 				3429615D205037E8005803AE /* Time */,
 				34DFAF2B204F5CB5007E6B45 /* Weather */,
 				34DFAF2C204F5D8D007E6B45 /* Config.swift */,
-				34E239E420596C2500888362 /* UIScheme.swift */,
 				34DFAEFC204F59E7007E6B45 /* AppDelegate.swift */,
 				34DFAF03204F59E7007E6B45 /* Assets.xcassets */,
 				34DFAF05204F59E7007E6B45 /* LaunchScreen.storyboard */,
@@ -567,6 +578,7 @@
 			files = (
 				34DFAF2F204F5E16007E6B45 /* WeatherService.swift in Sources */,
 				34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */,
+				3457925E20899C9100A8F019 /* UILabel+Styles.swift in Sources */,
 				34A0E80D2076B0830086FA51 /* Location.swift in Sources */,
 				34A0E80F2076CE7E0086FA51 /* WeatherFormatter.swift in Sources */,
 				3481F5322088633E00670543 /* ViewComponent.swift in Sources */,

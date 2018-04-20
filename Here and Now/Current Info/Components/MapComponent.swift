@@ -31,7 +31,7 @@ class MapComponent: ViewComponent {
         mapView.isMyLocationEnabled = true
         mapView.settings.rotateGestures = false
         mapView.settings.tiltGestures = false
-        mapView.setMinZoom(2.0, maxZoom: 18.0)
+        mapView.setMinZoom(3.0, maxZoom: 18.0)
         view.addSubview(mapView)
         mapView.easy.layout(Edges())
     }
@@ -79,7 +79,7 @@ extension MapComponent {
     private func cameraPosition(forLocation: Observable<CLLocation?>) -> Driver<GMSCameraPosition> {
         return forLocation
             .filterNil()
-            .map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 45) }
+            .map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 20) }
             .asDriver(onErrorDriveWith: SharedSequence.empty())
     }
 }

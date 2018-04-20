@@ -18,6 +18,6 @@ class WeatherFormatter {
     }
     
     static func format(humidity: Float) -> String {
-        return "\(String(Int((humidity * 100).rounded())))% rh"
+        return "\(String(Int((humidity * 100).rounded())))% humidity"
     }
 }

@@ -52,10 +52,12 @@ class ClockComponent: ViewComponent {
             .disposed(by: disposedBy)
         
         inputs.uiScheme
-            .map { $0.style().textColor }
+            .map { $0.style() }
             .drive(onNext: {
-                self.timeLabel.textColor = $0
-                self.dateLabel.textColor = $0
+                self.timeLabel.textColor = $0.textColor
+                self.timeLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.dateLabel.textColor = $0.textColor
+                self.dateLabel.outlineShadow(color: $0.defaultBackgroundColor)
             })
             .disposed(by: disposedBy)
     }
