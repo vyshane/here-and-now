@@ -68,7 +68,7 @@ class HeadUpDisplayComponent: ViewComponent {
 
         currentTemperatureLabel.textAlignment = .left
         temperatureStackView.addArrangedSubview(currentTemperatureLabel)
-        currentTemperatureLabel.font = UIFont.systemFont(ofSize: 100, weight: .thin)
+        currentTemperatureLabel.font = UIFont.systemFont(ofSize: 90, weight: .thin)
         currentTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
         minimumTemperatureLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)

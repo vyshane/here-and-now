@@ -13,7 +13,7 @@ extension UILabel {
         self.layer.masksToBounds = false
         self.layer.shadowColor = color.cgColor
         self.layer.shadowRadius = 2.0
-        self.layer.shadowOpacity = 0.95
+        self.layer.shadowOpacity = 1.0
         self.layer.shadowOffset = CGSize(width: 0, height: 0)
     }
 }

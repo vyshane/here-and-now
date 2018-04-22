@@ -98,7 +98,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#797979"
+            "color": "#828282"
           }
         ]
       },
@@ -223,7 +223,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#c9cbd0"
+            "color": "#b9bbc0"
           }
         ]
       },
