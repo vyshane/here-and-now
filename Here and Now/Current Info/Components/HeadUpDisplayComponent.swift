@@ -99,7 +99,7 @@ class HeadUpDisplayComponent: ViewComponent {
         stackView.addArrangedSubview(currentHumidityLabel)
         currentHumidityLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
         
-        daySummaryLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        daySummaryLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         daySummaryLabel.numberOfLines = 0
         currentSummaryLabel.lineBreakMode = .byWordWrapping
         stackView.addArrangedSubview(daySummaryLabel)

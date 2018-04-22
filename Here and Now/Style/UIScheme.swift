@@ -14,14 +14,14 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.05, alpha: 1.0),
-                hudBackgroundColor: UIColor.white.withAlphaComponent(0.2),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.4),
                 defaultBackgroundColor: .white,
                 temperatureColor: TemperatureColor(
-                    cold: UIColor(red:0.23, green:0.69, blue:0.69, alpha:1.0),
-                    cool: UIColor(red:0.21, green:0.67, blue:0.82, alpha:1.0),
-                    warm: UIColor(red:0.29, green:0.57, blue:0.94, alpha:1.0),
-                    warmer: UIColor(red:0.35, green:0.45, blue:0.87, alpha:1.0),
-                    warmerToHot: UIColor(red:0.44, green:0.30, blue:0.94, alpha:1.0),
+                    cold: UIColor(red:0.22, green:0.55, blue:0.55, alpha:1.0),
+                    cool: UIColor(red:0.27, green:0.54, blue:0.69, alpha:1.0),
+                    warm: UIColor(red:0.29, green:0.55, blue:0.84, alpha:1.0),
+                    warmer: UIColor(red:0.31, green:0.43, blue:0.80, alpha:1.0),
+                    warmerToHot: UIColor(red:0.52, green:0.42, blue:0.76, alpha:1.0),
                     hot: UIColor(red:0.93, green:0.35, blue:0.55, alpha:1.0),
                     veryHot: UIColor(red:0.77, green:0.17, blue:0.00, alpha:1.0)
                 ),
@@ -30,7 +30,7 @@ enum UIScheme {
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
-                hudBackgroundColor: UIColor.black.withAlphaComponent(0.2),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
                 defaultBackgroundColor: .black,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.64, green:0.91, blue:1.00, alpha:1.0),
@@ -82,7 +82,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#e8e8e8"
+            "color": "#ececec"
           }
         ]
       },
@@ -98,7 +98,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#727272"
+            "color": "#797979"
           }
         ]
       },
@@ -142,7 +142,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#d0d0d0"
+            "color": "#dddddd"
           }
         ]
       },
@@ -178,7 +178,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#cecccc"
+            "color": "#ffffff"
           }
         ]
       },
@@ -223,7 +223,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#b9bbc0"
+            "color": "#c9cbd0"
           }
         ]
       },
