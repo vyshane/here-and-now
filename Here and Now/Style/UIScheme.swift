@@ -13,7 +13,7 @@ enum UIScheme {
         switch self {
         case .light:
             return UIStyle(
-                textColor: UIColor(white: 0.1, alpha: 1.0),
+                textColor: UIColor(white: 0.05, alpha: 1.0),
                 hudBackgroundColor: UIColor.white.withAlphaComponent(0.2),
                 defaultBackgroundColor: .white,
                 temperatureColor: TemperatureColor(

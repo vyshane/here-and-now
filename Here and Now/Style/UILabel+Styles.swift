@@ -12,8 +12,8 @@ extension UILabel {
     func outlineShadow(color: UIColor) {
         self.layer.masksToBounds = false
         self.layer.shadowColor = color.cgColor
-        self.layer.shadowRadius = 1.0
-        self.layer.shadowOpacity = 0.6
+        self.layer.shadowRadius = 2.0
+        self.layer.shadowOpacity = 0.95
         self.layer.shadowOffset = CGSize(width: 0, height: 0)
     }
 }

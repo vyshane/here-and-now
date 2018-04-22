@@ -3,7 +3,8 @@
 import Foundation
 
 struct Weather {
-    var description: String
+    var currentSummary: String
+    var daySummary: String
     var temperature: Float
     var apparentTemperature: Float
     var minimumTemperature: Float
@@ -15,8 +16,10 @@ struct Weather {
     
     init(fromJSON: ForecastJSON) {
         let currently = fromJSON.currently
+        let hourly = fromJSON.hourly
         let today = fromJSON.daily.data[0]
-        description = currently.summary
+        currentSummary = currently.summary
+        daySummary = hourly.summary
         temperature = currently.temperature
         apparentTemperature = currently.apparentTemperature
         minimumTemperature = today.temperatureLow
@@ -32,6 +35,7 @@ struct Weather {
 
 struct ForecastJSON: Decodable {
     let currently: CurrentlyJSON
+    let hourly: HourlyJSON
     let daily: DailyJSON
 }
 
@@ -41,6 +45,10 @@ struct CurrentlyJSON: Decodable {
     let apparentTemperature: Float
     let humidity: Float
     let pressure: Float
+}
+
+struct HourlyJSON: Decodable {
+    let summary: String
 }
 
 struct DailyJSON: Decodable {

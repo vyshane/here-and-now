@@ -21,7 +21,8 @@ class HeadUpDisplayComponent: ViewComponent {
     let view = UIView()
     private let disposedBy: DisposeBag
     private let clock: ClockComponent
-    private let summaryLabel = FittableFontLabel()
+    private let currentSummaryLabel = FittableFontLabel()
+    private let daySummaryLabel = UILabel()
     private let currentTemperatureLabel = UILabel()
     private let lowLabel = UILabel()
     private let minimumTemperatureLabel = UILabel()
@@ -48,17 +49,17 @@ class HeadUpDisplayComponent: ViewComponent {
             Right(16)
         )
         
-        summaryLabel.textAlignment = .left
-        stackView.addArrangedSubview(summaryLabel)
+        currentSummaryLabel.textAlignment = .left
+        stackView.addArrangedSubview(currentSummaryLabel)
         // Fill width
-        summaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .light)
-        summaryLabel.numberOfLines = 1
-        summaryLabel.lineBreakMode = .byWordWrapping
-        summaryLabel.maxFontSize = 64
-        summaryLabel.minFontScale = 0.1
-        summaryLabel.autoAdjustFontSize = true
+        currentSummaryLabel.font = UIFont.systemFont(ofSize: 180, weight: .light)
+        currentSummaryLabel.numberOfLines = 1
+        currentSummaryLabel.lineBreakMode = .byWordWrapping
+        currentSummaryLabel.maxFontSize = 64
+        currentSummaryLabel.minFontScale = 0.1
+        currentSummaryLabel.autoAdjustFontSize = true
 
-        stackView.setCustomSpacing(8, after: summaryLabel)
+        stackView.setCustomSpacing(8, after: currentSummaryLabel)
         
         let temperatureStackView = UIStackView()
         temperatureStackView.alignment = .center
@@ -67,14 +68,14 @@ class HeadUpDisplayComponent: ViewComponent {
 
         currentTemperatureLabel.textAlignment = .left
         temperatureStackView.addArrangedSubview(currentTemperatureLabel)
-        currentTemperatureLabel.font = UIFont.systemFont(ofSize: 130, weight: .thin)
+        currentTemperatureLabel.font = UIFont.systemFont(ofSize: 100, weight: .thin)
         currentTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
-        minimumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
+        minimumTemperatureLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
         minimumTemperatureLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         temperatureStackView.addArrangedSubview(minimumTemperatureLabel)
 
-        lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        lowLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         lowLabel.text = "Low"
         view.addSubview(lowLabel)
         lowLabel.easy.layout(
@@ -84,9 +85,9 @@ class HeadUpDisplayComponent: ViewComponent {
 
         maximumTemperatureLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         temperatureStackView.addArrangedSubview(maximumTemperatureLabel)
-        maximumTemperatureLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
+        maximumTemperatureLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
 
-        highLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        highLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         highLabel.text = "High"
         view.addSubview(highLabel)
         highLabel.easy.layout(
@@ -96,7 +97,12 @@ class HeadUpDisplayComponent: ViewComponent {
 
         currentHumidityLabel.textAlignment = .left
         stackView.addArrangedSubview(currentHumidityLabel)
-        currentHumidityLabel.font = UIFont.systemFont(ofSize: 28, weight: .regular)
+        currentHumidityLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+        
+        daySummaryLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        daySummaryLabel.numberOfLines = 0
+        currentSummaryLabel.lineBreakMode = .byWordWrapping
+        stackView.addArrangedSubview(daySummaryLabel)
     }
     
     func start(_ inputs: Inputs) {
@@ -114,8 +120,10 @@ class HeadUpDisplayComponent: ViewComponent {
             .map { $0.style() }
             .drive(onNext: {
                 self.view.backgroundColor = $0.hudBackgroundColor
-                self.summaryLabel.textColor = $0.textColor
-                self.summaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.currentSummaryLabel.textColor = $0.textColor
+                self.currentSummaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.daySummaryLabel.textColor = $0.textColor
+                self.daySummaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.lowLabel.textColor = $0.textColor
                 self.lowLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.minimumTemperatureLabel.textColor = $0.textColor
@@ -129,8 +137,8 @@ class HeadUpDisplayComponent: ViewComponent {
             })
             .disposed(by: disposedBy)
         
-        summary(forWeather: inputs.weather, placemark: inputs.placemark)
-            .drive(summaryLabel.rx.text)
+        currentSummary(forWeather: inputs.weather, placemark: inputs.placemark)
+            .drive(currentSummaryLabel.rx.text)
             .disposed(by: disposedBy)
         
         temperatureColor(forWeather: inputs.weather, uiScheme: inputs.uiScheme)
@@ -163,17 +171,22 @@ class HeadUpDisplayComponent: ViewComponent {
             .asDriver(onErrorJustReturn: "")
             .drive(self.currentHumidityLabel.rx.text)
             .disposed(by: disposedBy)
+        
+        inputs.weather.map { $0.daySummary }
+            .asDriver(onErrorJustReturn: "")
+            .drive(self.daySummaryLabel.rx.text)
+            .disposed(by: disposedBy)
     }
 }
 
 extension HeadUpDisplayComponent {
-    func summary(forWeather: Observable<Weather>, placemark: Observable<CLPlacemark>) -> Driver<String> {
+    func currentSummary(forWeather: Observable<Weather>, placemark: Observable<CLPlacemark>) -> Driver<String> {
         return Observable
             .combineLatest(forWeather, placemark) { (w, p) in
                 if let locality = p.locality {
-                    return "\(WeatherFormatter.format(description: w.description)) over \(locality)"
+                    return "\(WeatherFormatter.format(currentSummary: w.currentSummary)) over \(locality)"
                 }
-                return "\(WeatherFormatter.format(description: w.description))"
+                return "\(WeatherFormatter.format(currentSummary: w.currentSummary))"
             }
             .asDriver(onErrorJustReturn: "")
     }

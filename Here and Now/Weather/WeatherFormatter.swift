@@ -4,13 +4,13 @@ import Foundation
 
 class WeatherFormatter {
     
-    static func format(description: String) -> String {
+    static func format(currentSummary: String) -> String {
         let capitalizeFirst: (String) -> String = { $0.prefix(1).uppercased() + $0.dropFirst() }
-        let description = capitalizeFirst(description.lowercased())
-        if description == "Clear" {
-            return "\(description) sky"
+        let summary = capitalizeFirst(currentSummary.lowercased())
+        if summary == "Clear" {
+            return "\(summary) sky"
         }
-        return description
+        return summary
     }
     
     static func format(temperature: Float) -> String {
