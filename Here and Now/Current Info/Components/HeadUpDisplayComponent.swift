@@ -233,7 +233,8 @@ extension HeadUpDisplayComponent {
             .combineLatest(forWeather, uiScheme.asObservable()) { (w, s) in
                 var apparentTemperature = w.apparentTemperature
                 if !w.metricSystemUnits {
-                    apparentTemperature = (w.apparentTemperature - 32) * 5 / 9
+                    let toCelcius: (Float) -> Float = { ($0 - 32) * 5 / 9 }
+                    apparentTemperature = toCelcius(w.apparentTemperature)
                 }
                 var temperatureColor: UIColor
                 if apparentTemperature < 10 {
