@@ -24,7 +24,7 @@ class WeatherService {
         return URLSession.shared.rx
             .data(request: URLRequest(url: url!))
             .map { try JSONDecoder().decode(ForecastJSON.self, from: $0) }
-            .map { Weather(fromJSON: $0) }
+            .map { Weather(fromJSON: $0, metricSystemUnits: useMetricSystem) }
             .asSingle()
     }
 }

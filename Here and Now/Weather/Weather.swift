@@ -10,11 +10,15 @@ struct Weather {
     var minimumTemperature: Float
     var maximumTemperature: Float
     var humidity: Float
+    var precipitationProbability: Float
+    var precipitationType: String?
     var pressure: Float
+    var cloudCover: Float
     var sunrise: Date
     var sunset: Date
+    var metricSystemUnits: Bool
     
-    init(fromJSON: ForecastJSON) {
+    init(fromJSON: ForecastJSON, metricSystemUnits: Bool) {
         let currently = fromJSON.currently
         let hourly = fromJSON.hourly
         let today = fromJSON.daily.data[0]
@@ -25,9 +29,13 @@ struct Weather {
         minimumTemperature = today.temperatureLow
         maximumTemperature = today.temperatureHigh
         humidity = currently.humidity
+        precipitationProbability = today.precipProbability
+        precipitationType = today.precipType
         pressure = currently.pressure
+        cloudCover = currently.cloudCover
         sunrise = Date.init(timeIntervalSince1970: Double(today.sunriseTime))
         sunset = Date.init(timeIntervalSince1970: Double(today.sunsetTime))
+        self.metricSystemUnits = metricSystemUnits
     }
 }
 
@@ -45,6 +53,7 @@ struct CurrentlyJSON: Decodable {
     let apparentTemperature: Float
     let humidity: Float
     let pressure: Float
+    let cloudCover: Float
 }
 
 struct HourlyJSON: Decodable {
@@ -61,5 +70,7 @@ struct DailyDataJSON: Decodable {
     let sunsetTime: Int
     let temperatureLow: Float
     let temperatureHigh: Float
+    let precipProbability: Float
+    let precipType: String?
 }
 

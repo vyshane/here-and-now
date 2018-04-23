@@ -3,6 +3,7 @@
 import CoreLocation
 import EasyPeasy
 import GoogleMaps
+import os.log
 import RxCocoa
 import RxCoreLocation
 import RxSwift
@@ -63,13 +64,18 @@ class CurrentInfoComponent: ViewComponent {
         
         let idleCameraPosition = mapSources.idleAt.share()
         let idleCameraLocation = idleCameraPosition.map(toLocation).share()
-        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation).share()
+        
+        let placemark = placemarkForLocation(reverseGeocode: geocoder.rx.reverseGeocode)(idleCameraLocation)
+            .do(onNext: { print($0) })
+            .share()
+        
         let uiScheme = uiSchemeDriver(fromLocation: idleCameraLocation,
                                       date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
         
         let weather = checkWeather(fetch: self.weatherService.fetchCurrentWeather)(
             idleCameraLocation, currentDate(), Locale.current.usesMetricSystem)
             .retry(.exponentialDelayed(maxCount: 50, initial: 0.5, multiplier: 1.0), scheduler: MainScheduler.instance)
+            .do(onNext: { print($0) })
             .share()
         
         hud.start(
@@ -94,7 +100,7 @@ class CurrentInfoComponent: ViewComponent {
             })
             .disposed(by: disposedBy)
         
-        shouldShowHud(whenWeatherFetched: weather, mapCameraIdleAt: idleCameraPosition)
+        shouldShowHud(whenWeatherFetched: weather)
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { ok in
                 if ok {
@@ -124,12 +130,10 @@ extension CurrentInfoComponent {
             }
     }
     
-    func shouldShowHud(whenWeatherFetched: Observable<Weather>,
-                       mapCameraIdleAt: Observable<GMSCameraPosition>) -> Observable<Bool> {
-        return Observable
-            .zip(whenWeatherFetched, mapCameraIdleAt)
-            .map { _ in true }
+    func shouldShowHud(whenWeatherFetched: Observable<Weather>) -> Observable<Bool> {
+        return whenWeatherFetched.map { _ in true }
     }
+    
     func fadeIn(view: UIView, duration: TimeInterval) -> Void {
         if (view.alpha < 1.0) {
             UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: { view.alpha = 1.0 })

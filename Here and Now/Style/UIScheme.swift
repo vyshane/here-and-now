@@ -14,32 +14,32 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.05, alpha: 1.0),
-                hudBackgroundColor: UIColor.white.withAlphaComponent(0.4),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.5),
                 defaultBackgroundColor: .white,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.22, green:0.55, blue:0.55, alpha:1.0),
                     cool: UIColor(red:0.27, green:0.54, blue:0.69, alpha:1.0),
                     warm: UIColor(red:0.29, green:0.55, blue:0.84, alpha:1.0),
                     warmer: UIColor(red:0.31, green:0.43, blue:0.80, alpha:1.0),
-                    warmerToHot: UIColor(red:0.52, green:0.42, blue:0.76, alpha:1.0),
-                    hot: UIColor(red:0.93, green:0.35, blue:0.55, alpha:1.0),
-                    veryHot: UIColor(red:0.77, green:0.17, blue:0.00, alpha:1.0)
+                    warmerToHot: UIColor(red:0.44, green:0.27, blue:0.76, alpha:1.0),
+                    hot: UIColor(red:0.77, green:0.25, blue:0.44, alpha:1.0),
+                    veryHot: UIColor(red:0.77, green:0.30, blue:0.23, alpha:1.0)
                 ),
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
-                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.4),
                 defaultBackgroundColor: .black,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.64, green:0.91, blue:1.00, alpha:1.0),
                     cool: UIColor(red:0.00, green:0.70, blue:0.88, alpha:1.0),
                     warm: UIColor(red:0.28, green:0.62, blue:1.00, alpha:1.0),
-                    warmer: UIColor(red:0.04, green:0.48, blue:1.00, alpha:1.0),
+                    warmer: UIColor(red:0.31, green:0.43, blue:0.80, alpha:1.0),
                     warmerToHot: UIColor(red:0.60, green:0.43, blue:1.00, alpha:1.0),
                     hot: UIColor(red:0.95, green:0.53, blue:0.68, alpha:1.0),
-                    veryHot: UIColor(red:1.00, green:0.35, blue:0.09, alpha:1.0)
+                    veryHot: UIColor(red:0.77, green:0.17, blue:0.00, alpha:1.0)
                 ),
                 mapStyle: darkMapStyle
             )
