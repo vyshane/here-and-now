@@ -20,7 +20,6 @@ class HeadUpDisplayComponent: ViewComponent {
     
     let view = UIView()
     private let disposedBy: DisposeBag
-    private let clock: ClockComponent
     private let currentSummaryLabel = FittableFontLabel()
     private let currentTemperatureLabel = UILabel()
     private let lowLabel = UILabel()
@@ -36,12 +35,6 @@ class HeadUpDisplayComponent: ViewComponent {
     required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
         view.isUserInteractionEnabled = false
-        
-        clock = ClockComponent(disposedBy: disposedBy)
-        view.addSubview(clock.view)
-        clock.view.easy.layout(
-            Right(8), Bottom(8)
-        )
         
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -110,11 +103,11 @@ class HeadUpDisplayComponent: ViewComponent {
         currentHumidityLabel.textAlignment = .left
         stackView.addArrangedSubview(currentHumidityLabel)
         currentHumidityLabel.font = UIFont.systemFont(ofSize: 22, weight: .medium)
-        stackView.setCustomSpacing(4, after: currentHumidityLabel)
 
         daySummaryLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         daySummaryLabel.numberOfLines = 0
         stackView.addArrangedSubview(daySummaryLabel)
+        stackView.setCustomSpacing(8, after: daySummaryLabel)
 
         localTimeLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         localTimeLabel.numberOfLines = 0
@@ -122,14 +115,6 @@ class HeadUpDisplayComponent: ViewComponent {
     }
     
     func start(_ inputs: Inputs) {
-        clock.start(
-            ClockComponent.Inputs(
-                uiScheme: inputs.uiScheme,
-                date: inputs.date,
-                timeZone: inputs.placemark.map{ $0.timeZone }.filterNil()
-            )
-        )
-        
         inputs.uiScheme
             .map { $0.style() }
             .drive(onNext: {
@@ -150,7 +135,6 @@ class HeadUpDisplayComponent: ViewComponent {
                 self.precipitationProbabilityLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.currentHumidityLabel.textColor = $0.textColor
                 self.currentHumidityLabel.outlineShadow(color: $0.defaultBackgroundColor)
-                self.daySummaryLabel.textColor = $0.textColor
                 self.daySummaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.localTimeLabel.textColor = $0.textColor
                 self.localTimeLabel.outlineShadow(color: $0.defaultBackgroundColor)
@@ -165,6 +149,7 @@ class HeadUpDisplayComponent: ViewComponent {
             .drive(onNext: {
                 self.currentTemperatureLabel.textColor = $0
                 self.currentHumidityLabel.textColor = $0
+                self.daySummaryLabel.textColor = $0
             })
             .disposed(by: disposedBy)
 
