@@ -52,7 +52,7 @@ struct UIStyle {
     let hudBackgroundColor: UIColor
     let defaultBackgroundColor: UIColor
     let temperatureColor: TemperatureColor
-    let mapStyle: GMSMapStyle
+    let mapStyle: (Bool) -> GMSMapStyle
 }
 
 struct TemperatureColor {
@@ -76,13 +76,14 @@ func uiSchemeDriver(fromLocation: Observable<CLLocation>, date: Observable<Date>
         .asDriver(onErrorJustReturn: .light)
 }
 
-fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
+fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
+    return try! GMSMapStyle(jsonString: """
     [
       {
-        "elementType": "geometry",
+        "elementType": "labels.text",
         "stylers": [
           {
-            "color": "#ececec"
+            "visibility": "\(showTextLabels ? "on" : "off")"
           }
         ]
       },
@@ -91,6 +92,14 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "stylers": [
           {
             "visibility": "off"
+          }
+        ]
+      },
+      {
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#ececec"
           }
         ]
       },
@@ -235,17 +244,19 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
             "color": "#ffffff"
           }
         ]
-      }
+      },
     ]
     """)
+}
 
-fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
+fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
+    return try! GMSMapStyle(jsonString: """
     [
       {
-        "elementType": "geometry",
+        "elementType": "labels.text",
         "stylers": [
           {
-            "color": "#252525"
+            "visibility": "\(showTextLabels ? "on" : "off")"
           }
         ]
       },
@@ -254,6 +265,14 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
         "stylers": [
           {
             "visibility": "off"
+          }
+        ]
+      },
+      {
+        "elementType": "geometry",
+        "stylers": [
+          {
+            "color": "#252525"
           }
         ]
       },
@@ -436,3 +455,4 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
       },
     ]
     """)
+}
