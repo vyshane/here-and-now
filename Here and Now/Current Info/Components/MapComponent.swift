@@ -79,7 +79,7 @@ extension MapComponent {
     private func cameraPosition(forLocation: Observable<CLLocation?>) -> Driver<GMSCameraPosition> {
         return forLocation
             .filterNil()
-            .map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 20) }
+            .map { GMSCameraPosition.camera(withTarget: $0.coordinate, zoom: 14, bearing: 0, viewingAngle: 0) }
             .asDriver(onErrorDriveWith: SharedSequence.empty())
     }
 }

@@ -14,7 +14,7 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.05, alpha: 1.0),
-                hudBackgroundColor: UIColor.white.withAlphaComponent(0.5),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.3),
                 defaultBackgroundColor: .white,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.22, green:0.55, blue:0.55, alpha:1.0),
@@ -30,7 +30,7 @@ enum UIScheme {
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
-                hudBackgroundColor: UIColor.black.withAlphaComponent(0.4),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
                 defaultBackgroundColor: .black,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.64, green:0.91, blue:1.00, alpha:1.0),
