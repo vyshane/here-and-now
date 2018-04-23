@@ -98,7 +98,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#828282"
+            "color": "#999999"
           }
         ]
       },
@@ -133,7 +133,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#959595"
+            "color": "#999999"
           }
         ]
       },
@@ -151,7 +151,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#888888"
+            "color": "#999999"
           }
         ]
       },
@@ -169,7 +169,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#888888"
+            "color": "#999999"
           }
         ]
       },
@@ -187,7 +187,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#888888"
+            "color": "#999999"
           }
         ]
       },
@@ -196,7 +196,7 @@ fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#888888"
+            "color": "#999999"
           }
         ]
       },
@@ -261,7 +261,7 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#606060"
+            "color": "#666666"
           }
         ]
       },
@@ -287,7 +287,7 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#747474"
+            "color": "#707070"
           }
         ]
       },
@@ -304,7 +304,7 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#717171"
+            "color": "#666666"
           }
         ]
       },
@@ -331,7 +331,7 @@ fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#636363"
+            "color": "#606060"
           }
         ]
       },
