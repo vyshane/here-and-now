@@ -63,7 +63,7 @@ extension MapComponent {
             .asObservable()
             .map(toLocation)
         return uiSchemeDriver(fromLocation: location, date: date)
-            .map { $0.style().mapStyle(true) }
+            .map { $0.style().mapStyle }
     }
     
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Driver<Bool> {

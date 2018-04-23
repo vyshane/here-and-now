@@ -52,7 +52,7 @@ struct UIStyle {
     let hudBackgroundColor: UIColor
     let defaultBackgroundColor: UIColor
     let temperatureColor: TemperatureColor
-    let mapStyle: (Bool) -> GMSMapStyle
+    let mapStyle: GMSMapStyle
 }
 
 struct TemperatureColor {
@@ -76,14 +76,13 @@ func uiSchemeDriver(fromLocation: Observable<CLLocation>, date: Observable<Date>
         .asDriver(onErrorJustReturn: .light)
 }
 
-fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
-    return try! GMSMapStyle(jsonString: """
+fileprivate let lightMapStyle = try! GMSMapStyle(jsonString: """
     [
       {
-        "elementType": "labels.text",
+        "elementType": "geometry",
         "stylers": [
           {
-            "visibility": "\(showTextLabels ? "on" : "off")"
+            "color": "#ececec"
           }
         ]
       },
@@ -92,14 +91,6 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "stylers": [
           {
             "visibility": "off"
-          }
-        ]
-      },
-      {
-        "elementType": "geometry",
-        "stylers": [
-          {
-            "color": "#ececec"
           }
         ]
       },
@@ -244,19 +235,17 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
             "color": "#ffffff"
           }
         ]
-      },
+      }
     ]
     """)
-}
 
-fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
-    return try! GMSMapStyle(jsonString: """
+fileprivate let darkMapStyle = try! GMSMapStyle(jsonString: """
     [
       {
-        "elementType": "labels.text",
+        "elementType": "geometry",
         "stylers": [
           {
-            "visibility": "\(showTextLabels ? "on" : "off")"
+            "color": "#252525"
           }
         ]
       },
@@ -265,14 +254,6 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "stylers": [
           {
             "visibility": "off"
-          }
-        ]
-      },
-      {
-        "elementType": "geometry",
-        "stylers": [
-          {
-            "color": "#252525"
           }
         ]
       },
@@ -455,4 +436,3 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
       },
     ]
     """)
-}
