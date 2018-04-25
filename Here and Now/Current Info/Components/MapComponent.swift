@@ -73,16 +73,15 @@ class MapComponent: ViewComponent {
             })
             .disposed(by: disposedBy)
         
-        snapshotReady(snapshotMapView.rx.snapshotReady, isMapMoving: isMoving,
-                      snapshotMapIdleAt: snapshotMapView.rx.idleAt.asObservable())
+        snapshotReady(snapshotMapView.rx.snapshotReady, isMapMoving: isMoving)
             .flatMapLatest({ _ in SharedSequence.of(self.snapshotMapView.snapshot()) })
-            .do(onNext: { _ in self.snapshotImageView.fadeIn(duration: 0.3) })
-            .drive(self.snapshotImageView.rx.image)
+            .drive(onNext: { image in
+                self.snapshotImageView.image = image
+                self.snapshotImageView.fadeIn(duration: 0.3)
+            })
             .disposed(by: disposedBy)
-        
-        isMoving
-            .filter { $0 }
-            .asDriver(onErrorJustReturn: true)
+
+        shouldHideSnapshotImageView(isMapMoving: isMoving)
             .drive(onNext: { _ in self.snapshotImageView.fadeOut() })
             .disposed(by: disposedBy)
 
@@ -128,18 +127,23 @@ extension MapComponent {
         return Observable.merge(idleAt.map { _ in false }, willMove.map { _ in true })
     }
     
-    func snapshotReady(_ ready: Observable<Void>, isMapMoving: Observable<Bool>,
-                       snapshotMapIdleAt: Observable<GMSCameraPosition>) -> Driver<GMSCameraPosition> {
-        let snapshotReadyAt = Observable.zip(ready, snapshotMapIdleAt) { _, s in s }
-        let readyNotMovingAt: Observable<GMSCameraPosition?> = snapshotReadyAt
-            .withLatestFrom(isMapMoving) { (s, isMoving) in
+    func snapshotReady(_ ready: Observable<Void>, isMapMoving: Observable<Bool>) -> Driver<Void> {
+        let isReady: Observable<Void?> = ready
+            .withLatestFrom(isMapMoving) { (r, isMoving) in
                 if !isMoving {
-                    return .some(s)
+                    return .some(())
                 }
                 return .none
         }
-        return readyNotMovingAt
+        return isReady
             .filterNil()
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
+    }
+    
+    func shouldHideSnapshotImageView(isMapMoving: Observable<Bool>) -> Driver<Void> {
+        return isMapMoving
+            .filter { $0 }
+            .map { _ in () }
             .asDriver(onErrorDriveWith: SharedSequence.empty())
     }
     
