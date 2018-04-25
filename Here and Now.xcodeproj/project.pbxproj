@@ -12,9 +12,11 @@
 		3429615F20503809005803AE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3429615E20503809005803AE /* Time.swift */; };
 		34534AA9207512FC001149F0 /* CLGeocoder+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */; };
 		3457925E20899C9100A8F019 /* UILabel+Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3457925D20899C9100A8F019 /* UILabel+Styles.swift */; };
+		34691326208EB63B0046F16B /* UIView+Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34691325208EB63B0046F16B /* UIView+Snapshot.swift */; };
 		3481F5322088633E00670543 /* ViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3481F5312088633E00670543 /* ViewComponent.swift */; };
 		3483308C2087818900CC7A08 /* CurrentInfoComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3483308B2087818900CC7A08 /* CurrentInfoComponent.swift */; };
 		3483308E208803CF00CC7A08 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3483308D208803CF00CC7A08 /* README.md */; };
+		34951DF6209022F20050E08E /* UIView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34951DF5209022F20050E08E /* UIView+Animation.swift */; };
 		34A0E80D2076B0830086FA51 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A0E80C2076B0830086FA51 /* Location.swift */; };
 		34A0E80F2076CE7E0086FA51 /* WeatherFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A0E80E2076CE7E0086FA51 /* WeatherFormatter.swift */; };
 		34A68A162084A53B002ACDFA /* MapComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A68A152084A53B002ACDFA /* MapComponent.swift */; };
@@ -58,9 +60,11 @@
 		3429615E20503809005803AE /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		34534AA8207512FC001149F0 /* CLGeocoder+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLGeocoder+Rx.swift"; sourceTree = "<group>"; };
 		3457925D20899C9100A8F019 /* UILabel+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Styles.swift"; sourceTree = "<group>"; };
+		34691325208EB63B0046F16B /* UIView+Snapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Snapshot.swift"; sourceTree = "<group>"; };
 		3481F5312088633E00670543 /* ViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponent.swift; sourceTree = "<group>"; };
 		3483308B2087818900CC7A08 /* CurrentInfoComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentInfoComponent.swift; sourceTree = "<group>"; };
 		3483308D208803CF00CC7A08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		34951DF5209022F20050E08E /* UIView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Animation.swift"; sourceTree = "<group>"; };
 		34A0E80C2076B0830086FA51 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		34A0E80E2076CE7E0086FA51 /* WeatherFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherFormatter.swift; sourceTree = "<group>"; };
 		34A68A152084A53B002ACDFA /* MapComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapComponent.swift; sourceTree = "<group>"; };
@@ -144,6 +148,8 @@
 				34E239E420596C2500888362 /* UIScheme.swift */,
 				3457925D20899C9100A8F019 /* UILabel+Styles.swift */,
 				34CCA82E208D9C6200127DA4 /* UIColor+Manipulation.swift */,
+				34691325208EB63B0046F16B /* UIView+Snapshot.swift */,
+				34951DF5209022F20050E08E /* UIView+Animation.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
@@ -583,9 +589,11 @@
 				34A0E80D2076B0830086FA51 /* Location.swift in Sources */,
 				34A0E80F2076CE7E0086FA51 /* WeatherFormatter.swift in Sources */,
 				3481F5322088633E00670543 /* ViewComponent.swift in Sources */,
+				34691326208EB63B0046F16B /* UIView+Snapshot.swift in Sources */,
 				34DFAEFF204F59E7007E6B45 /* CurrentInfoViewController.swift in Sources */,
 				34DFAEFD204F59E7007E6B45 /* AppDelegate.swift in Sources */,
 				3483308C2087818900CC7A08 /* CurrentInfoComponent.swift in Sources */,
+				34951DF6209022F20050E08E /* UIView+Animation.swift in Sources */,
 				34E239E520596C2500888362 /* UIScheme.swift in Sources */,
 				34DFAF2D204F5D8D007E6B45 /* Config.swift in Sources */,
 				34A68A162084A53B002ACDFA /* MapComponent.swift in Sources */,

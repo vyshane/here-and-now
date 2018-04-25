@@ -40,7 +40,7 @@ class CurrentInfoComponent: ViewComponent {
         hud = HeadUpDisplayComponent(disposedBy: disposedBy)
         view.addSubview(hud.view)
         hud.view.easy.layout(Edges())
-        fadeOut(view: hud.view, duration: 0)
+        hud.view.fadeOut()
     }
     
     func start(_ inputs: Inputs) {
@@ -54,12 +54,13 @@ class CurrentInfoComponent: ViewComponent {
         
         mapSources.didFinishTileRendering
             .asDriver(onErrorJustReturn: ())
-            .drive(onNext: { _ in self.fadeOut(view: self.mask, duration: 0.5) })
+            .drive(onNext: { _ in self.mask.fadeOut(duration: 0.5) })
             .disposed(by: disposedBy)
         
-        mapSources.willMove
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { _ in self.fadeOut(view: self.hud.view, duration: 0.5) })
+        mapSources.isMoving
+            .filter { $0 }
+            .asDriver(onErrorJustReturn: true)
+            .drive(onNext: { _ in self.hud.view.fadeOut(duration: 0.5) })
             .disposed(by: disposedBy)
         
         let idleCameraPosition = mapSources.idleAt.share()
@@ -69,8 +70,8 @@ class CurrentInfoComponent: ViewComponent {
             .do(onNext: { print($0) })
             .share()
         
-        let uiScheme = uiSchemeDriver(fromLocation: idleCameraLocation,
-                                      date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
+        let uiScheme = uiSchemeDriver(forLocation: idleCameraLocation,
+                                             date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
         
         let weather = checkWeather(fetch: self.weatherService.fetchCurrentWeather)(
             idleCameraLocation, currentDate(), Locale.current.usesMetricSystem)
@@ -96,7 +97,7 @@ class CurrentInfoComponent: ViewComponent {
             .drive(onNext: { _ in
                 // Prevent flash of map background when reloading tiles after
                 // screen dimension or aspect ratio change
-                self.fadeIn(view: self.mask, duration: 0)
+                self.mask.fadeIn()
             })
             .disposed(by: disposedBy)
         
@@ -104,7 +105,7 @@ class CurrentInfoComponent: ViewComponent {
             .asDriver(onErrorJustReturn: false)
             .drive(onNext: { ok in
                 if ok {
-                    self.fadeIn(view: self.hud.view, duration: 0.5)
+                    self.hud.view.fadeIn(duration: 0.5)
                 }
             })
             .disposed(by: disposedBy)
@@ -132,17 +133,5 @@ extension CurrentInfoComponent {
     
     func shouldShowHud(whenWeatherFetched: Observable<Weather>) -> Observable<Bool> {
         return whenWeatherFetched.map { _ in true }
-    }
-    
-    func fadeIn(view: UIView, duration: TimeInterval) -> Void {
-        if (view.alpha < 1.0) {
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: { view.alpha = 1.0 })
-        }
-    }
-    
-    func fadeOut(view: UIView, duration: TimeInterval) -> Void {
-        if (view.alpha > 0.0) {
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: { view.alpha = 0.0 })
-        }
     }
 }

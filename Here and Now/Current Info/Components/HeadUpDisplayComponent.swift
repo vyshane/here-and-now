@@ -104,12 +104,11 @@ class HeadUpDisplayComponent: ViewComponent {
         stackView.addArrangedSubview(currentHumidityLabel)
         currentHumidityLabel.font = UIFont.systemFont(ofSize: 22, weight: .medium)
 
-        daySummaryLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        daySummaryLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         daySummaryLabel.numberOfLines = 0
         stackView.addArrangedSubview(daySummaryLabel)
-        stackView.setCustomSpacing(8, after: daySummaryLabel)
 
-        localTimeLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        localTimeLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         localTimeLabel.numberOfLines = 0
         stackView.addArrangedSubview(localTimeLabel)
     }
@@ -135,6 +134,7 @@ class HeadUpDisplayComponent: ViewComponent {
                 self.precipitationProbabilityLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.currentHumidityLabel.textColor = $0.textColor
                 self.currentHumidityLabel.outlineShadow(color: $0.defaultBackgroundColor)
+                self.daySummaryLabel.textColor = $0.textColor
                 self.daySummaryLabel.outlineShadow(color: $0.defaultBackgroundColor)
                 self.localTimeLabel.textColor = $0.textColor
                 self.localTimeLabel.outlineShadow(color: $0.defaultBackgroundColor)
@@ -149,7 +149,6 @@ class HeadUpDisplayComponent: ViewComponent {
             .drive(onNext: {
                 self.currentTemperatureLabel.textColor = $0
                 self.currentHumidityLabel.textColor = $0
-                self.daySummaryLabel.textColor = $0
             })
             .disposed(by: disposedBy)
 

@@ -47,6 +47,8 @@ enum UIScheme {
     }
 }
 
+typealias MapStyle = (Bool) -> GMSMapStyle
+
 struct UIStyle {
     let textColor: UIColor
     let hudBackgroundColor: UIColor
@@ -65,25 +67,29 @@ struct TemperatureColor {
     let veryHot: UIColor
 }
 
-func uiSchemeDriver(fromLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {
+func uiScheme(forLocation: Observable<CLLocation>, date: Observable<Date>) -> Observable<UIScheme> {
     return Observable
-        .combineLatest(fromLocation, date) { (l, d) in
+        .combineLatest(forLocation, date) { (l, d) in
             if let isDayTime = isDaytime(date: d, coordinate: l.coordinate) {
                 return isDayTime ? .light : .dark
             }
             return .light
         }
+}
+
+func uiSchemeDriver(forLocation: Observable<CLLocation>, date: Observable<Date>) -> Driver<UIScheme> {
+    return uiScheme(forLocation: forLocation, date: date)
         .asDriver(onErrorJustReturn: .light)
 }
 
-fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
+fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { isForeground in
     return try! GMSMapStyle(jsonString: """
     [
       {
         "elementType": "labels.text",
         "stylers": [
           {
-            "visibility": "\(showTextLabels ? "on" : "off")"
+            "visibility": "\(isForeground ? "on" : "off")"
           }
         ]
       },
@@ -107,7 +113,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -120,11 +126,20 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         ]
       },
       {
+        "featureType": "administrative.locality",
+        "elementType": "labels.text.fill",
+        "stylers": [
+          {
+            "color": "#444444"
+          }
+        ]
+      },
+      {
         "featureType": "administrative.land_parcel",
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -142,7 +157,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -160,7 +175,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -178,7 +193,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -196,7 +211,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -205,7 +220,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#999999"
+            "color": "#777777"
           }
         ]
       },
@@ -249,14 +264,14 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
     """)
 }
 
-fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
+fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { isForeground in
     return try! GMSMapStyle(jsonString: """
     [
       {
         "elementType": "labels.text",
         "stylers": [
           {
-            "visibility": "\(showTextLabels ? "on" : "off")"
+            "visibility": "\(isForeground ? "on" : "off")"
           }
         ]
       },
@@ -280,7 +295,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#666666"
+            "color": "#777777"
           }
         ]
       },
@@ -306,7 +321,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#707070"
+            "color": "#cccccc"
           }
         ]
       },
@@ -314,7 +329,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "featureType": "administrative.land_parcel",
         "stylers": [
           {
-            "visibility": "off"
+            "color": "777777"
           }
         ]
       },
@@ -323,7 +338,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#666666"
+            "color": "#bbbbbb"
           }
         ]
       },
@@ -332,7 +347,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#666666"
+            "color": "#777777"
           }
         ]
       },
@@ -350,7 +365,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#606060"
+            "color": "#777777"
           }
         ]
       },
@@ -377,7 +392,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#505050"
+            "color": "#666666"
           }
         ]
       },
@@ -413,7 +428,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#505050"
+            "color": "#666666"
           }
         ]
       },
@@ -422,7 +437,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#444444"
+            "color": "#666666"
           }
         ]
       },
@@ -440,7 +455,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { showTextLabels in
         "elementType": "labels.text.fill",
         "stylers": [
           {
-            "color": "#404040"
+            "color": "#555555"
           }
         ]
       },

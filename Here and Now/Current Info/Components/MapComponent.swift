@@ -17,30 +17,41 @@ class MapComponent: ViewComponent {
     
     struct Outputs {
         let didFinishTileRendering: Observable<Void>
-        let willMove: ControlEvent<Bool>
-        let idleAt: ControlEvent<GMSCameraPosition>
+        let isMoving: Observable<Bool>
+        let idleAt: Observable<GMSCameraPosition>
     }
     
     let view = UIView()
-    let mapView = GMSMapView()
+    private let isMapForeground = BehaviorSubject<Bool>(value: false)
+    private let mapView = createMapView()
+    private let snapshotMapView = createMapView()
+    private let snapshotImageView = UIImageView()
     private let disposedBy: DisposeBag
 
     required init(disposedBy: DisposeBag) {
         self.disposedBy = disposedBy
-        mapView.isBuildingsEnabled = true
-        mapView.isMyLocationEnabled = true
-        mapView.settings.rotateGestures = false
-        mapView.settings.tiltGestures = false
-        mapView.setMinZoom(3.0, maxZoom: 18.0)
+        
+        snapshotMapView.isMyLocationEnabled = false
+        snapshotMapView.settings.setAllGesturesEnabled(false)
+        snapshotMapView.settings.consumesGesturesInView = false
+        view.addSubview(snapshotMapView)
+        snapshotMapView.easy.layout(Edges())
+
         view.addSubview(mapView)
         mapView.easy.layout(Edges())
+
+        snapshotImageView.isUserInteractionEnabled = false
+        snapshotImageView.fadeOut()
+        view.addSubview(snapshotImageView)
+        snapshotImageView.easy.layout(Edges())
     }
     
     func start(_ inputs: Inputs) -> Outputs {
-        mapStyle(forCameraPosition: mapView.rx.idleAt, date: inputs.date.throttle(60, scheduler: MainScheduler.instance))
-            .drive(onNext: { self.mapView.mapStyle = $0 })
-            .disposed(by: disposedBy)
-        
+        let idleAt = mapView.rx.idleAt.share()
+        let isMoving = isMapMoving(idleAt: idleAt, willMove: self.mapView.rx.willMove.asObservable())
+        let mapStyleAtIdle = self.mapStyle(forCameraPosition: idleAt,
+                                           date: inputs.date.throttle(60, scheduler: MainScheduler.instance)).share()
+
         shouldHideMap(forAuthorizationEvent: inputs.authorization)
             .drive(view.rx.isHidden)
             .disposed(by: disposedBy)
@@ -48,22 +59,59 @@ class MapComponent: ViewComponent {
         cameraPosition(forLocation: inputs.initialLocation)
             .drive(mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
+
+        mapView.rx.idleAt
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
+            .drive(snapshotMapView.rx.camera)
+            .disposed(by: disposedBy)
         
+        mapStyleAtIdle
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
+            .drive(onNext: {
+                self.mapView.mapStyle = $0(true)
+                self.snapshotMapView.mapStyle = $0(false)
+            })
+            .disposed(by: disposedBy)
+        
+        snapshotReady(snapshotMapView.rx.snapshotReady, isMapMoving: isMoving,
+                      snapshotMapIdleAt: snapshotMapView.rx.idleAt.asObservable())
+            .flatMapLatest({ _ in SharedSequence.of(self.snapshotMapView.snapshot()) })
+            .do(onNext: { _ in self.snapshotImageView.fadeIn(duration: 0.3) })
+            .drive(self.snapshotImageView.rx.image)
+            .disposed(by: disposedBy)
+        
+        isMoving
+            .filter { $0 }
+            .asDriver(onErrorJustReturn: true)
+            .drive(onNext: { _ in self.snapshotImageView.fadeOut() })
+            .disposed(by: disposedBy)
+
         return Outputs(
             didFinishTileRendering: mapView.rx.didFinishTileRendering,
-            willMove: mapView.rx.willMove,
-            idleAt: mapView.rx.idleAt
+            isMoving: isMoving,
+            idleAt: idleAt
         )
+    }
+    
+    static func createMapView() -> GMSMapView {
+        let mapView = GMSMapView()
+        mapView.isBuildingsEnabled = true
+        mapView.isMyLocationEnabled = true
+        mapView.settings.myLocationButton = true
+        mapView.settings.rotateGestures = false
+        mapView.settings.tiltGestures = false
+        mapView.setMinZoom(3.0, maxZoom: 18.0)
+        return mapView
     }
 }
 
 extension MapComponent {
-    func mapStyle(forCameraPosition: ControlEvent<GMSCameraPosition>, date: Observable<Date>) -> Driver<GMSMapStyle> {
+    func mapStyle(forCameraPosition: Observable<GMSCameraPosition>, date: Observable<Date>) -> Observable<MapStyle> {
         let location = forCameraPosition
             .asObservable()
             .map(toLocation)
-        return uiSchemeDriver(fromLocation: location, date: date)
-            .map { $0.style().mapStyle(true) }
+        return uiScheme(forLocation: location, date: date)
+            .map { $0.style().mapStyle }
     }
     
     func shouldHideMap(forAuthorizationEvent: Observable<CLAuthorizationEvent>) -> Driver<Bool> {
@@ -74,6 +122,25 @@ extension MapComponent {
             }
         }
         .asDriver(onErrorJustReturn: true)
+    }
+    
+    func isMapMoving(idleAt: Observable<GMSCameraPosition>, willMove: Observable<Bool>) -> Observable<Bool> {
+        return Observable.merge(idleAt.map { _ in false }, willMove.map { _ in true })
+    }
+    
+    func snapshotReady(_ ready: Observable<Void>, isMapMoving: Observable<Bool>,
+                       snapshotMapIdleAt: Observable<GMSCameraPosition>) -> Driver<GMSCameraPosition> {
+        let snapshotReadyAt = Observable.zip(ready, snapshotMapIdleAt) { _, s in s }
+        let readyNotMovingAt: Observable<GMSCameraPosition?> = snapshotReadyAt
+            .withLatestFrom(isMapMoving) { (s, isMoving) in
+                if !isMoving {
+                    return .some(s)
+                }
+                return .none
+        }
+        return readyNotMovingAt
+            .filterNil()
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
     }
     
     private func cameraPosition(forLocation: Observable<CLLocation?>) -> Driver<GMSCameraPosition> {
