@@ -14,7 +14,7 @@ enum UIScheme {
         case .light:
             return UIStyle(
                 textColor: UIColor(white: 0.05, alpha: 1.0),
-                hudBackgroundColor: UIColor.white.withAlphaComponent(0.3),
+                hudBackgroundColor: UIColor.white.withAlphaComponent(0.35),
                 defaultBackgroundColor: .white,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.22, green:0.55, blue:0.55, alpha:1.0),
@@ -25,12 +25,18 @@ enum UIScheme {
                     hot: UIColor(red:0.77, green:0.25, blue:0.44, alpha:1.0),
                     veryHot: UIColor(red:0.77, green:0.30, blue:0.23, alpha:1.0)
                 ),
+                mainHeadingFont: UIFont.systemFont(ofSize: 180, weight: .light),
+                mainStatFont: UIFont.systemFont(ofSize: 52, weight: .light),
+                subStatFont: UIFont.systemFont(ofSize: 22, weight: .medium),
+                subStatLabelFont: UIFont.systemFont(ofSize: 14, weight: .medium),
+                currentWeatherFont: UIFont.systemFont(ofSize: 22, weight: .medium),
+                normalTextFont: UIFont.systemFont(ofSize: 15, weight: .medium),
                 mapStyle: lightMapStyle
             )
         case .dark:
             return UIStyle(
                 textColor: UIColor(white: 0.8, alpha: 1.0),
-                hudBackgroundColor: UIColor.black.withAlphaComponent(0.3),
+                hudBackgroundColor: UIColor.black.withAlphaComponent(0.35),
                 defaultBackgroundColor: .black,
                 temperatureColor: TemperatureColor(
                     cold: UIColor(red:0.64, green:0.91, blue:1.00, alpha:1.0),
@@ -41,6 +47,12 @@ enum UIScheme {
                     hot: UIColor(red:0.95, green:0.53, blue:0.68, alpha:1.0),
                     veryHot: UIColor(red:0.77, green:0.17, blue:0.00, alpha:1.0)
                 ),
+                mainHeadingFont: UIFont.systemFont(ofSize: 180, weight: .thin),
+                mainStatFont: UIFont.systemFont(ofSize: 52, weight: .thin),
+                subStatFont: UIFont.systemFont(ofSize: 22, weight: .regular),
+                subStatLabelFont: UIFont.systemFont(ofSize: 14, weight: .regular),
+                currentWeatherFont: UIFont.systemFont(ofSize: 22, weight: .regular),
+                normalTextFont: UIFont.systemFont(ofSize: 15, weight: .regular),
                 mapStyle: darkMapStyle
             )
         }
@@ -54,6 +66,12 @@ struct UIStyle {
     let hudBackgroundColor: UIColor
     let defaultBackgroundColor: UIColor
     let temperatureColor: TemperatureColor
+    let mainHeadingFont: UIFont
+    let mainStatFont: UIFont
+    let subStatFont: UIFont
+    let subStatLabelFont: UIFont
+    let currentWeatherFont: UIFont
+    let normalTextFont: UIFont
     let mapStyle: (Bool) -> GMSMapStyle
 }
 
@@ -247,7 +265,7 @@ fileprivate let lightMapStyle: (Bool) -> GMSMapStyle = { isForeground in
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#b9bbc0"
+            "color": "\(isForeground ? "#b9bbc0" : "#d9dbe0")"
           }
         ]
       },
@@ -410,7 +428,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { isForeground in
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#363636"
+            "color": "\(isForeground ? "#373737" : "303030")"
           }
         ]
       },
@@ -419,7 +437,7 @@ fileprivate let darkMapStyle: (Bool) -> GMSMapStyle = { isForeground in
         "elementType": "geometry",
         "stylers": [
           {
-            "color": "#363636"
+            "color": "\(isForeground ? "#373737" : "303030")"
           }
         ]
       },

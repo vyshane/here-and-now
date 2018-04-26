@@ -23,14 +23,13 @@ class WeatherFormatter {
     }
     
     static func format(humidity: Float) -> String {
-        return "\(String(Int((humidity * 100).rounded())))% humidity"
+        return String(Int((humidity * 100).rounded())) + "%"
     }
     
-    static func format(precipitationProbability: Float) -> String {
-        return "\(String(Int((precipitationProbability * 100).rounded())))%"
-    }
-    
-    static func format(precipitationType: String?) -> String {
-        return precipitationType.map { "\($0.capitalized)?" } ?? "Precipitation?"
+    static func format(precipitationProbability: Float, type: String?) -> String {
+        if let type = type {
+            return String(Int((precipitationProbability * 100).rounded())) + "% chance of " + type
+        }
+        return "No precipitation likely"
     }
 }
