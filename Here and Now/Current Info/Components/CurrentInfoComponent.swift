@@ -101,13 +101,9 @@ class CurrentInfoComponent: ViewComponent {
             })
             .disposed(by: disposedBy)
         
-        shouldShowHud(whenWeatherFetched: weather)
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { ok in
-                if ok {
-                    self.hud.view.fadeIn(duration: 0.5)
-                }
-            })
+        shouldShowHud(whenWeatherFetched: weather, placemarkAvailable: placemark)
+            .asDriver(onErrorDriveWith: SharedSequence.empty())
+            .drive(onNext: { _ in self.hud.view.fadeIn(duration: 0.5) })
             .disposed(by: disposedBy)
     }
 }
@@ -131,7 +127,8 @@ extension CurrentInfoComponent {
             }
     }
     
-    func shouldShowHud(whenWeatherFetched: Observable<Weather>) -> Observable<Bool> {
-        return whenWeatherFetched.map { _ in true }
+    func shouldShowHud(whenWeatherFetched: Observable<Weather>,
+                       placemarkAvailable: Observable<CLPlacemark>) -> Observable<Void> {
+        return Observable.zip(whenWeatherFetched, placemarkAvailable) { _, _ in () }
     }
 }
