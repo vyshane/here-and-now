@@ -22,7 +22,6 @@ class MapComponent: ViewComponent {
     }
     
     let view = UIView()
-    private let isMapForeground = BehaviorSubject<Bool>(value: false)
     private let mapView = createMapView()
     private let snapshotMapView = createMapView()
     private let snapshotImageView = UIImageView()
@@ -48,7 +47,7 @@ class MapComponent: ViewComponent {
     
     func start(_ inputs: Inputs) -> Outputs {
         let idleAt = mapView.rx.idleAt.share()
-        let isMoving = isMapMoving(idleAt: idleAt, willMove: self.mapView.rx.willMove.asObservable())
+        let isMoving = isMapMoving(idleAt: idleAt, willMove: self.mapView.rx.willMove.asObservable()).share()
         let mapStyleAtIdle = self.mapStyle(forCameraPosition: idleAt,
                                            date: inputs.date.throttle(60, scheduler: MainScheduler.instance)).share()
 
@@ -129,7 +128,7 @@ extension MapComponent {
     
     func snapshotReady(_ ready: Observable<Void>, isMapMoving: Observable<Bool>) -> Driver<Void> {
         let isReady: Observable<Void?> = ready
-            .withLatestFrom(isMapMoving) { (r, isMoving) in
+            .withLatestFrom(isMapMoving) { (_, isMoving) in
                 if !isMoving {
                     return .some(())
                 }
