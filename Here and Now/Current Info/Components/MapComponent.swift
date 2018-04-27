@@ -46,15 +46,6 @@ class MapComponent: ViewComponent {
     }
     
     func start(_ inputs: Inputs) -> Outputs {
-        let idleAt = mapView.rx.idleAt.share()
-        let didChange = mapView.rx.didChange.share()
-        
-        let isMoving = isMapMoving(idleAt: idleAt, willMove: self.mapView.rx.willMove.asObservable(),
-                                   didChange: didChange).share()
-        
-        let mapStyleAtIdle = self.mapStyle(forCameraPosition: idleAt,
-                                           date: inputs.date.throttle(60, scheduler: MainScheduler.instance)).share()
-
         shouldHideMap(forAuthorizationEvent: inputs.authorization)
             .drive(view.rx.isHidden)
             .disposed(by: disposedBy)
@@ -63,10 +54,15 @@ class MapComponent: ViewComponent {
             .drive(mapView.rx.cameraToAnimate)
             .disposed(by: disposedBy)
 
-        mapView.rx.idleAt
+        let idleAt = mapView.rx.idleAt.share()
+        
+        idleAt
             .asDriver(onErrorDriveWith: SharedSequence.empty())
             .drive(snapshotMapView.rx.camera)
             .disposed(by: disposedBy)
+
+        let mapStyleAtIdle = self.mapStyle(forCameraPosition: idleAt,
+                                           date: inputs.date.throttle(60, scheduler: MainScheduler.instance)).share()
         
         mapStyleAtIdle
             .asDriver(onErrorDriveWith: SharedSequence.empty())
@@ -75,6 +71,10 @@ class MapComponent: ViewComponent {
                 self.snapshotMapView.mapStyle = $0(false)
             })
             .disposed(by: disposedBy)
+        
+        let didChange = mapView.rx.didChange.share()
+        let isMoving = isMapMoving(idleAt: idleAt, willMove: self.mapView.rx.willMove.asObservable(),
+                                   didChange: didChange).share()
         
         snapshotReady(snapshotMapView.rx.snapshotReady, isMapMoving: isMoving)
             .flatMapLatest({ _ in SharedSequence.of(self.snapshotMapView.snapshot()) })
