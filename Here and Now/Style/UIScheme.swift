@@ -25,7 +25,7 @@ enum UIScheme {
                     hot: UIColor(red:0.77, green:0.25, blue:0.44, alpha:1.0),
                     veryHot: UIColor(red:0.77, green:0.30, blue:0.23, alpha:1.0)
                 ),
-                mainHeadingFont: UIFont.systemFont(ofSize: 180, weight: .light),
+                mainHeadingFont: UIFont.systemFont(ofSize: 180, weight: .thin),
                 mainStatFont: UIFont.systemFont(ofSize: 52, weight: .light),
                 subStatFont: UIFont.systemFont(ofSize: 22, weight: .medium),
                 subStatLabelFont: UIFont.systemFont(ofSize: 14, weight: .medium),
