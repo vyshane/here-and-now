@@ -36,14 +36,18 @@ class HeadUpDisplayComponent: ViewComponent {
         self.disposedBy = disposedBy
         view.isUserInteractionEnabled = false
         
+        let safeAreaView = UIView()
+        view.addSubview(safeAreaView)
+        safeAreaView.easy.layout(
+            Height().like(view.safeAreaLayoutGuide),
+            Width().like(view.safeAreaLayoutGuide),
+            Center()
+        )
+        
         let stackView = UIStackView()
         stackView.axis = .vertical
-        view.addSubview(stackView)
-        stackView.easy.layout(
-            Top(8),
-            Left(16),
-            Right(16)
-        )
+        safeAreaView.addSubview(stackView)
+        stackView.easy.layout(Top(8), Left(16), Right(16))
         
         timeAndLocationLabel.textAlignment = .left
         stackView.addArrangedSubview(timeAndLocationLabel)
